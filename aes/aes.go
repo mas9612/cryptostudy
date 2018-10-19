@@ -1,6 +1,8 @@
 package aes
 
 const (
+	BytesOfWords = 4
+
 	KeyLength128   = 4
 	BlockSize128   = 4
 	NumOfRounds128 = 10
@@ -65,6 +67,9 @@ func Cipher(in []byte, out []byte, key []byte) {
 	state := make([]byte, len(in))
 	copy(state, in)
 
+	round := 0
+	addRoundKey(state, key, round)
+
 	// Round()
 	subBytes(state)
 	// ShiftRows
@@ -87,8 +92,10 @@ func subBytes(state []byte) {
 	}
 }
 
-func addRoundKey(state, key []byte) {
-
+func addRoundKey(state, key []byte, round int) {
+	for i := 0; i < BlockSize128*BytesOfWords; i++ {
+		state[i] ^= key[round*BlockSize128+i]
+	}
 }
 
 // Decrypt
