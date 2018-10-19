@@ -6,7 +6,7 @@ const (
 	NumOfRounds128 = 10
 
 	KeyLength192   = 6
-	BlckSize192    = 4
+	BlockSize192   = 4
 	NumOfRounds192 = 12
 
 	KeyLength256   = 8
@@ -55,15 +55,18 @@ var (
 )
 
 // Cipher encrypt plain text
-func Cipher(data []byte) {
+func Cipher(in []byte, out []byte, key []byte) {
 	// Encrypt
 	// 1. SubBytes
 	// 2. ShiftRows
 	// 3. MixColumns
 	// 4. AddRoundKey
 
+	state := make([]byte, len(in))
+	copy(state, in)
+
 	// Round()
-	subBytes(data)
+	subBytes(state)
 	// ShiftRows
 	// MixColumns
 	// AddRoundKey
@@ -72,14 +75,20 @@ func Cipher(data []byte) {
 	// SubBytes
 	// ShiftRows
 	// AddRoundKey
+
+	copy(out, state)
 }
 
-func subBytes(data []byte) {
-	for i := range data {
-		x := data[i] >> 4
-		y := data[i] & 0xf
-		data[i] = sbox[x][y]
+func subBytes(state []byte) {
+	for i := range state {
+		x := state[i] >> 4
+		y := state[i] & 0xf
+		state[i] = sbox[x][y]
 	}
+}
+
+func addRoundKey(state, key []byte) {
+
 }
 
 // Decrypt

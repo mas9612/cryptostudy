@@ -7,10 +7,18 @@ import (
 )
 
 func main() {
-	plain := "This is a test!!"
-	bytePlain := []byte(plain)
-	fmt.Printf("Before Cipher: %v, length: %v\n", bytePlain, len(bytePlain))
+	plainText := []byte{0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90, 0xa0, 0xb0, 0xc0, 0xd0, 0xe0, 0xf0}
+	fmt.Println("Before Cipher:")
+	for _, b := range plainText {
+		fmt.Printf("%02x ", b)
+	}
+	fmt.Print("\n")
 
-	aes.Cipher(bytePlain)
-	fmt.Printf("After Cipher: %v, length: %v\n", bytePlain, len(bytePlain))
+	cipherText := make([]byte, len(plainText))
+	aes.Cipher(plainText, cipherText, []byte{})
+	fmt.Println("After Cipher:")
+	for _, b := range cipherText {
+		fmt.Printf("%02x ", b)
+	}
+	fmt.Print("\n")
 }
