@@ -54,6 +54,11 @@ var (
 		[]byte{0xa0, 0xe0, 0x3b, 0x4d, 0xae, 0x2a, 0xf5, 0xb0, 0xc8, 0xeb, 0xbb, 0x3c, 0x83, 0x53, 0x99, 0x61},
 		[]byte{0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d},
 	}
+
+	// Nb represents the block size
+	Nb int
+	// Nr represents the number of rounds
+	Nr int
 )
 
 // Cipher encrypt plain text
@@ -64,6 +69,9 @@ func Cipher(in []byte, out []byte, key []byte) {
 	// 3. MixColumns
 	// 4. AddRoundKey
 
+	Nb = BlockSize128
+	Nr = NumOfRounds128
+
 	state := make([]byte, len(in))
 	copy(state, in)
 
@@ -72,7 +80,7 @@ func Cipher(in []byte, out []byte, key []byte) {
 
 	// Round()
 	subBytes(state)
-	// ShiftRows
+	shiftRows(state)
 	// MixColumns
 	// AddRoundKey
 
@@ -85,15 +93,28 @@ func Cipher(in []byte, out []byte, key []byte) {
 }
 
 func subBytes(state []byte) {
-	for i := range state {
+	for i := 0; i < Nb*BytesOfWords; i++ {
 		x := state[i] >> 4
 		y := state[i] & 0xf
 		state[i] = sbox[x][y]
 	}
 }
 
+func shiftRows(state []byte) {
+	tmp := make([]byte, Nb*BytesOfWords)
+	copy(tmp, state)
+
+	for i := 1; i < BytesOfWords; i++ { // i is a row index
+		colOffset := i
+		for j := 0; j < Nb; j++ { // j is a column index
+			column := (j + colOffset) % Nb
+			state[j*4+i] = tmp[column*4+i]
+		}
+	}
+}
+
 func addRoundKey(state, key []byte, round int) {
-	for i := 0; i < BlockSize128*BytesOfWords; i++ {
+	for i := 0; i < Nb*BytesOfWords; i++ {
 		state[i] ^= key[round*BlockSize128+i]
 	}
 }
