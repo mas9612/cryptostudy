@@ -81,7 +81,7 @@ func Cipher(in []byte, out []byte, key []byte) {
 	// Round()
 	subBytes(state)
 	shiftRows(state)
-	// MixColumns
+	mixColumns(state)
 	// AddRoundKey
 
 	// FinalRound()
@@ -110,6 +110,27 @@ func shiftRows(state []byte) {
 			column := (j + colOffset) % Nb
 			state[j*4+i] = tmp[column*4+i]
 		}
+	}
+}
+
+func mixColumns(state []byte) {
+	bytes := make([]byte, Nb*BytesOfWords)
+	copy(bytes, state)
+
+	for i := 0; i < Nb; i++ {
+		mulBy2 := make([]byte, BytesOfWords)
+		for j := 0; j < BytesOfWords; j++ {
+			tmp := int(bytes[i*4+j]) << 1 // multiplied by 2
+			if tmp&0x100 == 0 {           // if 0x100 is set
+				tmp = tmp ^ 0x11b // mod by 0x11b (x^8 + x^4 + x^3 + x + 1)
+			}
+			mulBy2[j] = byte(tmp)
+		}
+
+		state[i*4] = mulBy2[0] ^ (mulBy2[1] ^ bytes[i*4+1]) ^ bytes[i*4+2] ^ bytes[i*4+3]
+		state[i*4+1] = mulBy2[1] ^ (mulBy2[2] ^ bytes[i*4+2]) ^ bytes[i*4+0] ^ bytes[i*4+3]
+		state[i*4+2] = mulBy2[2] ^ (mulBy2[3] ^ bytes[i*4+3]) ^ bytes[i*4+0] ^ bytes[i*4+1]
+		state[i*4+3] = mulBy2[3] ^ (mulBy2[0] ^ bytes[i*4+0]) ^ bytes[i*4+1] ^ bytes[i*4+2]
 	}
 }
 
