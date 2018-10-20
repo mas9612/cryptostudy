@@ -121,7 +121,7 @@ func mixColumns(state []byte) {
 		mulBy2 := make([]byte, BytesOfWords)
 		for j := 0; j < BytesOfWords; j++ {
 			tmp := int(bytes[i*4+j]) << 1 // multiplied by 2
-			if tmp&0x100 == 0 {           // if 0x100 is set
+			if tmp&0x100 != 0 {           // if 0x100 is set
 				tmp = tmp ^ 0x11b // mod by 0x11b (x^8 + x^4 + x^3 + x + 1)
 			}
 			mulBy2[j] = byte(tmp)
