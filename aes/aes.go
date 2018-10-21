@@ -1,18 +1,28 @@
 package aes
 
 const (
+	// BytesOfWords represents the number of bytes for each word
 	BytesOfWords = 4
 
-	KeyLength128   = 4
-	BlockSize128   = 4
+	// KeyLength128 represents the key length (word) for AES-128
+	KeyLength128 = 4
+	// BlockSize128 represents the block size (word) for AES-128
+	BlockSize128 = 4
+	// NumOfRounds128 represents the number of round for AES-128
 	NumOfRounds128 = 10
 
-	KeyLength192   = 6
-	BlockSize192   = 4
+	// KeyLength192 represents the key length (word) for AES-192
+	KeyLength192 = 6
+	// BlockSize192 represents the block size (word) for AES-192
+	BlockSize192 = 4
+	// NumOfRounds192 represents the number of round for AES-192
 	NumOfRounds192 = 12
 
-	KeyLength256   = 8
-	BlockSize256   = 4
+	// KeyLength256 represents the key length (word) for AES-256
+	KeyLength256 = 8
+	// BlockSize256 represents the block size (word) for AES-256
+	BlockSize256 = 4
+	// NumOfRounds256 represents the number of round for AES-256
 	NumOfRounds256 = 14
 )
 
@@ -65,12 +75,6 @@ var (
 
 // Cipher encrypts plain text
 func Cipher(in []byte, out []byte, key []byte) {
-	// Encrypt
-	// 1. SubBytes
-	// 2. ShiftRows
-	// 3. MixColumns
-	// 4. AddRoundKey
-
 	Nb = BlockSize128
 	Nr = NumOfRounds128
 	Nk = KeyLength128
