@@ -1,5 +1,9 @@
 package aes
 
+import (
+	"log"
+)
+
 const (
 	// BytesOfWords represents the number of bytes for each word
 	BytesOfWords = 4
@@ -65,19 +69,32 @@ var (
 		[]byte{0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d},
 	}
 
+	// Nk represents the length of key
+	Nk int
 	// Nb represents the block size
 	Nb int
 	// Nr represents the number of rounds
 	Nr int
-	// Nk represents the length of key
-	Nk int
 )
 
 // Cipher encrypts plain text
 func Cipher(in []byte, out []byte, key []byte) {
-	Nb = BlockSize128
-	Nr = NumOfRounds128
-	Nk = KeyLength128
+	switch len(key) {
+	case 16:
+		Nk = KeyLength128
+		Nb = BlockSize128
+		Nr = NumOfRounds128
+	case 24:
+		Nk = KeyLength192
+		Nb = BlockSize192
+		Nr = NumOfRounds192
+	case 32:
+		Nk = KeyLength256
+		Nb = BlockSize256
+		Nr = NumOfRounds256
+	default:
+		log.Fatalln("AES key length must be one of 128, 192, 256 bit")
+	}
 
 	expandedKey := make([]byte, BytesOfWords*Nb*(Nr+1))
 	keyExpansion(key, expandedKey)
