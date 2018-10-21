@@ -128,9 +128,9 @@ func keyExpansion(key []byte, expanded []byte) {
 }
 
 func mul2(num byte) byte {
-	tmp := int(num) << 1
-	if tmp&0x100 != 0 {
-		tmp ^= 0x11b
+	tmp := int(num) << 1 // multiplied by 2
+	if tmp&0x100 != 0 {  //if 0x100 is set
+		tmp ^= 0x11b // mod by 0x11b (x^8 + x^4 + x^3 + x + 1)
 	}
 	return byte(tmp)
 }
@@ -179,11 +179,7 @@ func mixColumns(state []byte) {
 	for i := 0; i < Nb; i++ {
 		mulBy2 := make([]byte, BytesOfWords)
 		for j := 0; j < BytesOfWords; j++ {
-			tmp := int(bytes[i*4+j]) << 1 // multiplied by 2
-			if tmp&0x100 != 0 {           // if 0x100 is set
-				tmp = tmp ^ 0x11b // mod by 0x11b (x^8 + x^4 + x^3 + x + 1)
-			}
-			mulBy2[j] = byte(tmp)
+			mulBy2[j] = mul2(bytes[i*4+j])
 		}
 
 		state[i*4] = mulBy2[0] ^ (mulBy2[1] ^ bytes[i*4+1]) ^ bytes[i*4+2] ^ bytes[i*4+3]
