@@ -59,9 +59,11 @@ var (
 	Nb int
 	// Nr represents the number of rounds
 	Nr int
+	// Nk represents the length of key
+	Nk int
 )
 
-// Cipher encrypt plain text
+// Cipher encrypts plain text
 func Cipher(in []byte, out []byte, key []byte) {
 	// Encrypt
 	// 1. SubBytes
@@ -71,6 +73,10 @@ func Cipher(in []byte, out []byte, key []byte) {
 
 	Nb = BlockSize128
 	Nr = NumOfRounds128
+	Nk = KeyLength128
+
+	expandedKey := make([]byte, BytesOfWords*Nb*(Nr+1))
+	keyExpansion(key, expandedKey)
 
 	state := make([]byte, len(in))
 	copy(state, in)
@@ -78,18 +84,67 @@ func Cipher(in []byte, out []byte, key []byte) {
 	round := 0
 	addRoundKey(state, key, round)
 
-	// Round()
+	// Round
+	for round = 1; round < Nr; round++ {
+		subBytes(state)
+		shiftRows(state)
+		mixColumns(state)
+		addRoundKey(state, expandedKey, round)
+	}
+
+	// FinalRound
 	subBytes(state)
 	shiftRows(state)
-	mixColumns(state)
-	// AddRoundKey
-
-	// FinalRound()
-	// SubBytes
-	// ShiftRows
-	// AddRoundKey
+	addRoundKey(state, expandedKey, round)
 
 	copy(out, state)
+}
+
+func keyExpansion(key []byte, expanded []byte) {
+	copy(expanded, key)
+
+	rc := byte(1) // round constant
+
+	for i := Nk; i < Nb*(Nr+1); i++ {
+		tmp := make([]byte, 4)
+		copy(tmp, expanded[i*4-BytesOfWords:i*4]) // copy previous word from expanded key to tmp
+		if i%Nk == 0 {
+			rotWord(tmp)
+			subWord(tmp)
+			tmp[0] ^= rc
+			rc = mul2(rc)
+		} else if Nk > 6 && i%Nk == 4 {
+			subWord(tmp)
+		}
+
+		for j := 0; j < BytesOfWords; j++ {
+			expanded[i*4+j] = expanded[(i-Nk)*4+j] ^ tmp[j]
+		}
+	}
+}
+
+func mul2(num byte) byte {
+	tmp := int(num) << 1
+	if tmp&0x100 != 0 {
+		tmp ^= 0x11b
+	}
+	return byte(tmp)
+}
+
+func rotWord(word []byte) {
+	tmp := word[0]
+	for i := 0; i < BytesOfWords-1; i++ {
+		word[i] = word[i+1]
+	}
+	word[BytesOfWords-1] = tmp
+}
+
+func subWord(word []byte) {
+	for i := 0; i < BytesOfWords; i++ {
+		x := word[i] >> 4
+		y := word[i] & 0xf
+		word[i] = sbox[x][y]
+	}
 }
 
 func subBytes(state []byte) {
@@ -136,7 +191,7 @@ func mixColumns(state []byte) {
 
 func addRoundKey(state, key []byte, round int) {
 	for i := 0; i < Nb*BytesOfWords; i++ {
-		state[i] ^= key[round*BlockSize128+i]
+		state[i] ^= key[round*BlockSize128*BytesOfWords+i]
 	}
 }
 
