@@ -235,8 +235,15 @@ func addRoundKey(state, key []byte, round int) {
 	}
 }
 
-// Decrypt
-// 1. AddRoundKey
-// 2. InvMixColumns
-// 3. InvShiftRows
-// 4. InvSubBytes
+func invShiftRows(state []byte) {
+	tmp := make([]byte, Nb*BytesOfWords)
+	copy(tmp, state)
+
+	for i := 1; i < BytesOfWords; i++ { // i is a row index
+		colOffset := i
+		for j := 0; j < Nb; j++ { // j is a column index
+			column := (j + colOffset) % Nb
+			state[column*4+i] = tmp[j*4+i]
+		}
+	}
+}
