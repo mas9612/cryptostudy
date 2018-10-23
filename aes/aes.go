@@ -133,7 +133,7 @@ func keyExpansion(key []byte, expanded []byte) {
 			rotWord(tmp)
 			subWord(tmp)
 			tmp[0] ^= rc
-			rc = mul2(rc)
+			rc = mul(rc, 2)
 		} else if Nk > 6 && i%Nk == 4 {
 			subWord(tmp)
 		}
@@ -142,6 +142,29 @@ func keyExpansion(key []byte, expanded []byte) {
 			expanded[i*4+j] = expanded[(i-Nk)*4+j] ^ tmp[j]
 		}
 	}
+}
+
+func mul(num1, num2 byte) byte {
+	switch num2 {
+	case 0:
+		return 0
+	case 1:
+		return num1
+	case 2:
+		return mul2(num1)
+	}
+
+	remains := int(num2)
+	result := num1
+	i := 2
+	for ; i <= remains; i *= 2 {
+		result = mul2(result)
+	}
+	remains -= i / 2
+	if remains > 0 {
+		result ^= mul(num1, byte(remains))
+	}
+	return result
 }
 
 func mul2(num byte) byte {
@@ -196,7 +219,7 @@ func mixColumns(state []byte) {
 	for i := 0; i < Nb; i++ {
 		mulBy2 := make([]byte, BytesOfWords)
 		for j := 0; j < BytesOfWords; j++ {
-			mulBy2[j] = mul2(bytes[i*4+j])
+			mulBy2[j] = mul(bytes[i*4+j], 2)
 		}
 
 		state[i*4] = mulBy2[0] ^ (mulBy2[1] ^ bytes[i*4+1]) ^ bytes[i*4+2] ^ bytes[i*4+3]
