@@ -247,3 +247,11 @@ func invShiftRows(state []byte) {
 		}
 	}
 }
+
+func invSubBytes(state []byte) {
+	for i := 0; i < Nb*BytesOfWords; i++ {
+		x := state[i] >> 4
+		y := state[i] & 0xf
+		state[i] = invSbox[x][y]
+	}
+}
