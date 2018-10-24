@@ -121,6 +121,48 @@ func Cipher(in []byte, out []byte, key []byte) {
 	copy(out, state)
 }
 
+// InvCipher decrypt given cipher text
+func InvCipher(in, out, key []byte) {
+	switch len(key) {
+	case 16:
+		Nk = KeyLength128
+		Nb = BlockSize128
+		Nr = NumOfRounds128
+	case 24:
+		Nk = KeyLength192
+		Nb = BlockSize192
+		Nr = NumOfRounds192
+	case 32:
+		Nk = KeyLength256
+		Nb = BlockSize256
+		Nr = NumOfRounds256
+	default:
+		log.Fatalln("AES key length must be one of 128, 192, 256 bit")
+	}
+
+	expandedKey := make([]byte, BytesOfWords*Nb*(Nr+1))
+	keyExpansion(key, expandedKey)
+
+	state := make([]byte, len(in))
+	copy(state, in)
+
+	round := Nr
+	addRoundKey(state, expandedKey, round)
+
+	for round = Nr - 1; round > 0; round-- {
+		invShiftRows(state)
+		invSubBytes(state)
+		addRoundKey(state, expandedKey, round)
+		invMixColumns(state)
+	}
+
+	invShiftRows(state)
+	invSubBytes(state)
+	addRoundKey(state, expandedKey, round)
+
+	copy(out, state)
+}
+
 func keyExpansion(key []byte, expanded []byte) {
 	copy(expanded, key)
 
