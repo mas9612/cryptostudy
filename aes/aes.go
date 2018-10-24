@@ -255,3 +255,15 @@ func invSubBytes(state []byte) {
 		state[i] = invSbox[x][y]
 	}
 }
+
+func invMixColumns(state []byte) {
+	bytes := make([]byte, Nb*BytesOfWords)
+	copy(bytes, state)
+
+	for i := 0; i < Nb; i++ {
+		state[i*4] = mul(bytes[i*4], 0x0e) ^ mul(bytes[i*4+1], 0x0b) ^ mul(bytes[i*4+2], 0x0d) ^ mul(bytes[i*4+3], 0x09)
+		state[i*4+1] = mul(bytes[i*4+1], 0x0e) ^ mul(bytes[i*4+2], 0x0b) ^ mul(bytes[i*4+3], 0x0d) ^ mul(bytes[i*4], 0x09)
+		state[i*4+2] = mul(bytes[i*4+2], 0x0e) ^ mul(bytes[i*4+3], 0x0b) ^ mul(bytes[i*4], 0x0d) ^ mul(bytes[i*4+1], 0x09)
+		state[i*4+3] = mul(bytes[i*4+3], 0x0e) ^ mul(bytes[i*4], 0x0b) ^ mul(bytes[i*4+1], 0x0d) ^ mul(bytes[i*4+2], 0x09)
+	}
+}
