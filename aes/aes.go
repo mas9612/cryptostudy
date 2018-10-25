@@ -144,7 +144,7 @@ func Cipher(in []byte, key []byte) []byte {
 }
 
 // InvCipher decrypt given cipher text
-func InvCipher(in, out, key []byte) {
+func InvCipher(in, key []byte) []byte {
 	switch len(key) {
 	case 16:
 		Nk = KeyLength128
@@ -165,24 +165,48 @@ func InvCipher(in, out, key []byte) {
 	expandedKey := make([]byte, BytesOfWords*Nb*(Nr+1))
 	keyExpansion(key, expandedKey)
 
-	state := make([]byte, len(in))
-	copy(state, in)
+	numOfBlocks := len(in) / (Nb * BytesOfWords)
+	if len(in)%(Nb*BytesOfWords) != 0 {
+		numOfBlocks++
+	}
+	out := make([]byte, numOfBlocks*Nb*BytesOfWords)
 
-	round := Nr
-	addRoundKey(state, expandedKey, round)
+	var last int
+	for i := 0; i < numOfBlocks; i++ {
+		state := make([]byte, Nb*BytesOfWords)
+		from := i * Nb * BytesOfWords
+		to := (i + 1) * Nb * BytesOfWords
 
-	for round = Nr - 1; round > 0; round-- {
+		stateLength := to - from
+		if i == numOfBlocks-1 && to > len(in) {
+			stateLength = len(in) - from
+		}
+		copy(state, in[from:from+stateLength])
+
+		round := Nr
+		addRoundKey(state, expandedKey, round)
+
+		for round = Nr - 1; round > 0; round-- {
+			invShiftRows(state)
+			invSubBytes(state)
+			addRoundKey(state, expandedKey, round)
+			invMixColumns(state)
+		}
+
 		invShiftRows(state)
 		invSubBytes(state)
 		addRoundKey(state, expandedKey, round)
-		invMixColumns(state)
+
+		if i == numOfBlocks-1 && int(state[Nb*BytesOfWords-1]) < Nb*BytesOfWords {
+			padding := int(state[Nb*BytesOfWords-1])
+			last = from + Nb*BytesOfWords - padding
+			copy(out[from:last], state[:Nb*BytesOfWords-padding])
+		} else {
+			last = from + Nb*BytesOfWords
+			copy(out[from:last], state)
+		}
 	}
-
-	invShiftRows(state)
-	invSubBytes(state)
-	addRoundKey(state, expandedKey, round)
-
-	copy(out, state)
+	return out[:last]
 }
 
 func keyExpansion(key []byte, expanded []byte) {

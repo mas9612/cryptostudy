@@ -29,8 +29,7 @@ func main() {
 	}
 	fmt.Print("\n")
 
-	decrypted := make([]byte, len(cipherText))
-	aes.InvCipher(cipherText, decrypted, key)
+	decrypted := aes.InvCipher(cipherText, key)
 	fmt.Println("Decrypted:")
 	for _, b := range decrypted {
 		fmt.Printf("%02x ", b)
@@ -62,8 +61,7 @@ func main() {
 	}
 	fmt.Print("\n")
 
-	decrypted = make([]byte, len(cipherText))
-	aes.InvCipher(cipherText, decrypted, key)
+	decrypted = aes.InvCipher(cipherText, key)
 	fmt.Println("Decrypted:")
 	for _, b := range decrypted {
 		fmt.Printf("%02x ", b)
@@ -95,8 +93,7 @@ func main() {
 	}
 	fmt.Print("\n")
 
-	decrypted = make([]byte, len(cipherText))
-	aes.InvCipher(cipherText, decrypted, key)
+	decrypted = aes.InvCipher(cipherText, key)
 	fmt.Println("Decrypted:")
 	for _, b := range decrypted {
 		fmt.Printf("%02x ", b)
