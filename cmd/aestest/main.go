@@ -17,8 +17,7 @@ func main() {
 	}
 	fmt.Print("\n")
 
-	cipherText := make([]byte, len(plainText))
-	aes.Cipher(plainText, cipherText, key)
+	cipherText := aes.Cipher(plainText, key)
 	fmt.Println("After Cipher:")
 	for _, b := range cipherText {
 		fmt.Printf("%02x ", b)
@@ -51,8 +50,7 @@ func main() {
 	}
 	fmt.Print("\n")
 
-	cipherText = make([]byte, len(plainText))
-	aes.Cipher(plainText, cipherText, key)
+	cipherText = aes.Cipher(plainText, key)
 	fmt.Println("After Cipher:")
 	for _, b := range cipherText {
 		fmt.Printf("%02x ", b)
@@ -85,8 +83,7 @@ func main() {
 	}
 	fmt.Print("\n")
 
-	cipherText = make([]byte, len(plainText))
-	aes.Cipher(plainText, cipherText, key)
+	cipherText = aes.Cipher(plainText, key)
 	fmt.Println("After Cipher:")
 	for _, b := range cipherText {
 		fmt.Printf("%02x ", b)
