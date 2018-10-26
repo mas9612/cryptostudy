@@ -123,21 +123,7 @@ func Cipher(in []byte, key []byte) []byte {
 			}
 		}
 
-		round := 0
-		addRoundKey(state, key, round)
-
-		for round = 1; round < Nr; round++ {
-			subBytes(state)
-			shiftRows(state)
-			mixColumns(state)
-			addRoundKey(state, expandedKey, round)
-		}
-
-		// FinalRound
-		subBytes(state)
-		shiftRows(state)
-		addRoundKey(state, expandedKey, round)
-
+		cipher(state, expandedKey)
 		copy(out[from:from+Nb*BytesOfWords], state)
 	}
 	return out
@@ -171,7 +157,6 @@ func InvCipher(in, key []byte) []byte {
 	}
 	out := make([]byte, numOfBlocks*Nb*BytesOfWords)
 
-	var last int
 	for i := 0; i < numOfBlocks; i++ {
 		state := make([]byte, Nb*BytesOfWords)
 		from := i * Nb * BytesOfWords
@@ -183,28 +168,48 @@ func InvCipher(in, key []byte) []byte {
 		}
 		copy(state, in[from:from+stateLength])
 
-		round := Nr
-		addRoundKey(state, expandedKey, round)
+		invCipher(state, expandedKey)
+		copy(out[from:from+Nb*BytesOfWords], state)
+	}
 
-		for round = Nr - 1; round > 0; round-- {
-			invShiftRows(state)
-			invSubBytes(state)
-			addRoundKey(state, expandedKey, round)
-			invMixColumns(state)
-		}
+	var end int
+	if int(out[len(out)-1]) < Nb*BytesOfWords {
+		padding := int(out[len(out)-1])
+		end = len(out) - padding
+	} else {
+		end = len(out)
+	}
+	return out[:end]
+}
 
+func cipher(state, key []byte) {
+	round := 0
+	addRoundKey(state, key, round)
+
+	for round = 1; round < Nr; round++ {
+		subBytes(state)
+		shiftRows(state)
+		mixColumns(state)
+		addRoundKey(state, key, round)
+	}
+
+	subBytes(state)
+	shiftRows(state)
+	addRoundKey(state, key, round)
+}
+
+func invCipher(state, key []byte) {
+	round := Nr
+	addRoundKey(state, key, round)
+
+	for round = Nr - 1; round > 0; round-- {
 		invShiftRows(state)
 		invSubBytes(state)
-		addRoundKey(state, expandedKey, round)
-
-		if i == numOfBlocks-1 && int(state[Nb*BytesOfWords-1]) < Nb*BytesOfWords {
-			padding := int(state[Nb*BytesOfWords-1])
-			last = from + Nb*BytesOfWords - padding
-			copy(out[from:last], state[:Nb*BytesOfWords-padding])
-		} else {
-			last = from + Nb*BytesOfWords
-			copy(out[from:last], state)
-		}
+		addRoundKey(state, key, round)
+		invMixColumns(state)
 	}
-	return out[:last]
+
+	invShiftRows(state)
+	invSubBytes(state)
+	addRoundKey(state, key, round)
 }
