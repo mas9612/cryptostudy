@@ -122,6 +122,7 @@ func Cipher(in []byte, key []byte, mode int, iv []byte) []byte {
 	case ModeCBC:
 		out = cbcCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeCFB:
+		out = cfbCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeOFB:
 	case ModeCTR:
 	default:
@@ -164,6 +165,7 @@ func InvCipher(in, key []byte, mode int, iv []byte) []byte {
 	case ModeCBC:
 		out = cbcInvCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeCFB:
+		out = cfbInvCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeOFB:
 	case ModeCTR:
 	default:
