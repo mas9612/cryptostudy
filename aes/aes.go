@@ -89,7 +89,7 @@ var (
 )
 
 // Cipher encrypts plain text
-func Cipher(in []byte, key []byte, mode int) []byte {
+func Cipher(in []byte, key []byte, mode int, iv []byte) []byte {
 	switch len(key) {
 	case 16:
 		Nk = KeyLength128
@@ -120,6 +120,7 @@ func Cipher(in []byte, key []byte, mode int) []byte {
 	case ModeECB:
 		out = ecbCipher(in, expandedKey, numOfBlocks)
 	case ModeCBC:
+		out = cbcCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeCFB:
 	case ModeOFB:
 	case ModeCTR:
@@ -130,7 +131,7 @@ func Cipher(in []byte, key []byte, mode int) []byte {
 }
 
 // InvCipher decrypt given cipher text
-func InvCipher(in, key []byte, mode int) []byte {
+func InvCipher(in, key []byte, mode int, iv []byte) []byte {
 	switch len(key) {
 	case 16:
 		Nk = KeyLength128
@@ -161,6 +162,7 @@ func InvCipher(in, key []byte, mode int) []byte {
 	case ModeECB:
 		out = ecbInvCipher(in, expandedKey, numOfBlocks)
 	case ModeCBC:
+		out = cbcInvCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeCFB:
 	case ModeOFB:
 	case ModeCTR:

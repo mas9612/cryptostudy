@@ -17,7 +17,7 @@ func main() {
 	}
 	fmt.Print("\n")
 
-	cipherText := aes.Cipher(plainText, key, aes.ModeECB)
+	cipherText := aes.Cipher(plainText, key, aes.ModeECB, []byte{})
 	fmt.Println("After Cipher:")
 	for _, b := range cipherText {
 		fmt.Printf("%02x ", b)
@@ -29,7 +29,7 @@ func main() {
 	}
 	fmt.Print("\n")
 
-	decrypted := aes.InvCipher(cipherText, key, aes.ModeECB)
+	decrypted := aes.InvCipher(cipherText, key, aes.ModeECB, []byte{})
 	fmt.Println("Decrypted:")
 	for _, b := range decrypted {
 		fmt.Printf("%02x ", b)
@@ -49,7 +49,7 @@ func main() {
 	}
 	fmt.Print("\n")
 
-	cipherText = aes.Cipher(plainText, key, aes.ModeECB)
+	cipherText = aes.Cipher(plainText, key, aes.ModeECB, []byte{})
 	fmt.Println("After Cipher:")
 	for _, b := range cipherText {
 		fmt.Printf("%02x ", b)
@@ -61,7 +61,7 @@ func main() {
 	}
 	fmt.Print("\n")
 
-	decrypted = aes.InvCipher(cipherText, key, aes.ModeECB)
+	decrypted = aes.InvCipher(cipherText, key, aes.ModeECB, []byte{})
 	fmt.Println("Decrypted:")
 	for _, b := range decrypted {
 		fmt.Printf("%02x ", b)
@@ -81,7 +81,7 @@ func main() {
 	}
 	fmt.Print("\n")
 
-	cipherText = aes.Cipher(plainText, key, aes.ModeECB)
+	cipherText = aes.Cipher(plainText, key, aes.ModeECB, []byte{})
 	fmt.Println("After Cipher:")
 	for _, b := range cipherText {
 		fmt.Printf("%02x ", b)
@@ -93,7 +93,7 @@ func main() {
 	}
 	fmt.Print("\n")
 
-	decrypted = aes.InvCipher(cipherText, key, aes.ModeECB)
+	decrypted = aes.InvCipher(cipherText, key, aes.ModeECB, []byte{})
 	fmt.Println("Decrypted:")
 	for _, b := range decrypted {
 		fmt.Printf("%02x ", b)
