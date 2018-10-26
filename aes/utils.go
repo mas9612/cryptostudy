@@ -1,5 +1,9 @@
 package aes
 
+import (
+	"fmt"
+)
+
 func mul(num1, num2 byte) byte {
 	switch num2 {
 	case 0:
@@ -29,4 +33,11 @@ func mul2(num byte) byte {
 		tmp ^= 0x11b // mod by 0x11b (x^8 + x^4 + x^3 + x + 1)
 	}
 	return byte(tmp)
+}
+
+func printBytes(bytes []byte) {
+	for _, b := range bytes {
+		fmt.Printf("%02x", b)
+	}
+	fmt.Print("\n")
 }

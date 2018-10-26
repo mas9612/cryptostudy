@@ -1,6 +1,7 @@
 package aes
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -86,6 +87,9 @@ var (
 	Nb int
 	// Nr represents the number of rounds
 	Nr int
+
+	// PrintNRound is the number to print computation result of round N
+	PrintNRound int
 )
 
 // Cipher encrypts plain text
@@ -180,32 +184,80 @@ func InvCipher(in, key []byte, mode int, iv []byte) []byte {
 
 func cipher(state, key []byte) {
 	round := 0
+	if round == PrintNRound {
+		fmt.Printf("[Round %d]\n", round)
+	}
 	addRoundKey(state, key[:Nb*BytesOfWords])
-
-	for round = 1; round < Nr; round++ {
-		subBytes(state)
-		shiftRows(state)
-		mixColumns(state)
-		addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
+	if round == PrintNRound {
+		fmt.Print("After AddRoundKey: ")
+		printBytes(state)
 	}
 
-	subBytes(state)
-	shiftRows(state)
-	addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
+	for round = 1; round <= Nr; round++ {
+		if round == PrintNRound {
+			fmt.Printf("[Round %d]\n", round)
+		}
+		subBytes(state)
+		if round == PrintNRound {
+			fmt.Print("After SubBytes: ")
+			printBytes(state)
+		}
+		shiftRows(state)
+		if round == PrintNRound {
+			fmt.Print("After ShiftRows: ")
+			printBytes(state)
+		}
+		if round < Nr {
+			mixColumns(state)
+			if round == PrintNRound {
+				fmt.Print("After MixColumns: ")
+				printBytes(state)
+			}
+		}
+		addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
+		if round == PrintNRound {
+			fmt.Print("After AddRoundKey: ")
+			printBytes(state)
+		}
+	}
 }
 
 func invCipher(state, key []byte) {
 	round := Nr
+	if round == PrintNRound {
+		fmt.Printf("[Round %d]\n", round)
+	}
 	addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
-
-	for round = Nr - 1; round > 0; round-- {
-		invShiftRows(state)
-		invSubBytes(state)
-		addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
-		invMixColumns(state)
+	if round == PrintNRound {
+		fmt.Print("After AddRoundKey: ")
+		printBytes(state)
 	}
 
-	invShiftRows(state)
-	invSubBytes(state)
-	addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
+	for round = Nr - 1; round >= 0; round-- {
+		if round == PrintNRound {
+			fmt.Printf("[Round %d]\n", round)
+		}
+		invShiftRows(state)
+		if round == PrintNRound {
+			fmt.Print("After InvShiftRows: ")
+			printBytes(state)
+		}
+		invSubBytes(state)
+		if round == PrintNRound {
+			fmt.Print("After InvSubBytes: ")
+			printBytes(state)
+		}
+		addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
+		if round == PrintNRound {
+			fmt.Print("After AddRoundKey: ")
+			printBytes(state)
+		}
+		if round > 0 {
+			invMixColumns(state)
+			if round == PrintNRound {
+				fmt.Print("After InvMixColumns: ")
+				printBytes(state)
+			}
+		}
+	}
 }
