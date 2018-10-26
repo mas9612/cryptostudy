@@ -28,6 +28,17 @@ const (
 	BlockSize256 = 4
 	// NumOfRounds256 represents the number of round for AES-256
 	NumOfRounds256 = 14
+
+	// ModeECB represents ECB mode will be used as encryption mode
+	ModeECB = 100 + iota
+	// ModeCBC represents CBC mode will be used as encryption mode
+	ModeCBC
+	// ModeCFB represents CFB mode will be used as encryption mode
+	ModeCFB
+	// ModeOFB represents OFB mode will be used as encryption mode
+	ModeOFB
+	// ModeCTR represents CTR mode will be used as encryption mode
+	ModeCTR
 )
 
 var (
@@ -78,7 +89,7 @@ var (
 )
 
 // Cipher encrypts plain text
-func Cipher(in []byte, key []byte) []byte {
+func Cipher(in []byte, key []byte, mode int) []byte {
 	switch len(key) {
 	case 16:
 		Nk = KeyLength128
@@ -103,34 +114,23 @@ func Cipher(in []byte, key []byte) []byte {
 	if len(in)%(Nb*BytesOfWords) != 0 {
 		numOfBlocks++
 	}
-	out := make([]byte, numOfBlocks*Nb*BytesOfWords)
 
-	for i := 0; i < numOfBlocks; i++ {
-		state := make([]byte, Nb*BytesOfWords)
-		from := i * Nb * BytesOfWords
-		to := (i + 1) * Nb * BytesOfWords
-
-		stateLength := to - from
-		if i == numOfBlocks-1 && to > len(in) {
-			stateLength = len(in) - from
-		}
-		copy(state, in[from:from+stateLength])
-
-		if stateLength < Nb*BytesOfWords {
-			padding := Nb*BytesOfWords - stateLength
-			for i := stateLength; i < Nb*BytesOfWords; i++ {
-				state[i] = byte(padding)
-			}
-		}
-
-		cipher(state, expandedKey)
-		copy(out[from:from+Nb*BytesOfWords], state)
+	var out []byte
+	switch mode {
+	case ModeECB:
+		out = ecbCipher(in, expandedKey, numOfBlocks)
+	case ModeCBC:
+	case ModeCFB:
+	case ModeOFB:
+	case ModeCTR:
+	default:
+		log.Fatalln("Invalid encryption mode")
 	}
 	return out
 }
 
 // InvCipher decrypt given cipher text
-func InvCipher(in, key []byte) []byte {
+func InvCipher(in, key []byte, mode int) []byte {
 	switch len(key) {
 	case 16:
 		Nk = KeyLength128
@@ -155,31 +155,19 @@ func InvCipher(in, key []byte) []byte {
 	if len(in)%(Nb*BytesOfWords) != 0 {
 		numOfBlocks++
 	}
-	out := make([]byte, numOfBlocks*Nb*BytesOfWords)
 
-	for i := 0; i < numOfBlocks; i++ {
-		state := make([]byte, Nb*BytesOfWords)
-		from := i * Nb * BytesOfWords
-		to := (i + 1) * Nb * BytesOfWords
-
-		stateLength := to - from
-		if i == numOfBlocks-1 && to > len(in) {
-			stateLength = len(in) - from
-		}
-		copy(state, in[from:from+stateLength])
-
-		invCipher(state, expandedKey)
-		copy(out[from:from+Nb*BytesOfWords], state)
+	var out []byte
+	switch mode {
+	case ModeECB:
+		out = ecbInvCipher(in, expandedKey, numOfBlocks)
+	case ModeCBC:
+	case ModeCFB:
+	case ModeOFB:
+	case ModeCTR:
+	default:
+		log.Fatalln("Invalid encryption mode")
 	}
-
-	var end int
-	if int(out[len(out)-1]) < Nb*BytesOfWords {
-		padding := int(out[len(out)-1])
-		end = len(out) - padding
-	} else {
-		end = len(out)
-	}
-	return out[:end]
+	return out
 }
 
 func cipher(state, key []byte) {

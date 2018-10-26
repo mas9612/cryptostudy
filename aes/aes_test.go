@@ -42,7 +42,7 @@ func TestCipher(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		cipherText := Cipher(input, keys[i])
+		cipherText := Cipher(input, keys[i], ModeECB)
 		if !bytes.Equal(cipherText, expected[i]) {
 			t.Errorf("[TestCipher] case %d failed: cipherText != expected : '%v' != '%v'", i, cipherText, expected[i])
 		}
@@ -86,7 +86,7 @@ func TestInvCipher(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		plainText := InvCipher(input, keys[i])
+		plainText := InvCipher(input, keys[i], ModeECB)
 		if !bytes.Equal(plainText, expected[i]) {
 			t.Errorf("[TestInvCipher] case %d failed: plainText != expected : '%v' != '%v'", i, plainText, expected[i])
 		}
