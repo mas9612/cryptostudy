@@ -208,8 +208,39 @@ func cfbInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	return out[:len(out)-end]
 }
 
-func ofbCipher(in, key, feedback []byte) []byte {
-	return in
+func ofbCipher(in, key, iv []byte, numOfBlocks int) []byte {
+	out := make([]byte, numOfBlocks*Nb*BytesOfWords)
+	previous := make([]byte, Nb*BytesOfWords)
+	copy(previous, iv)
+
+	var end int
+	for i := 0; i < numOfBlocks; i++ {
+		state := make([]byte, Nb*BytesOfWords)
+		from := i * Nb * BytesOfWords
+		to := (i + 1) * Nb * BytesOfWords
+
+		stateLength := to - from
+		if i == numOfBlocks-1 && to > len(in) {
+			stateLength = len(in) - from
+		}
+		copy(state, in[from:from+stateLength])
+
+		cipher(previous, key)
+		// XOR with previous cipher block
+		for j := 0; j < Nb*BytesOfWords; j++ {
+			state[j] ^= previous[j]
+		}
+		copy(out[from:from+Nb*BytesOfWords], state)
+
+		if stateLength < Nb*BytesOfWords {
+			end = Nb*BytesOfWords - stateLength
+		}
+	}
+	return out[:len(out)-end]
+}
+
+func ofbInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
+	return ofbCipher(in, key, iv, numOfBlocks)
 }
 
 func ctrCipher(in, key, feedback []byte) []byte {

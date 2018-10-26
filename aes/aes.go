@@ -124,6 +124,7 @@ func Cipher(in []byte, key []byte, mode int, iv []byte) []byte {
 	case ModeCFB:
 		out = cfbCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeOFB:
+		out = ofbCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeCTR:
 	default:
 		log.Fatalln("Invalid encryption mode")
@@ -167,6 +168,7 @@ func InvCipher(in, key []byte, mode int, iv []byte) []byte {
 	case ModeCFB:
 		out = cfbInvCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeOFB:
+		out = ofbInvCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeCTR:
 	default:
 		log.Fatalln("Invalid encryption mode")
