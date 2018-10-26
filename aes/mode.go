@@ -1,6 +1,7 @@
 package aes
 
 import (
+	"encoding/binary"
 	"log"
 )
 
@@ -113,6 +114,7 @@ func cbcInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 
 	for i := 0; i < numOfBlocks; i++ {
 		state := make([]byte, Nb*BytesOfWords)
+		tmp := make([]byte, Nb*BytesOfWords)
 		from := i * Nb * BytesOfWords
 		to := (i + 1) * Nb * BytesOfWords
 
@@ -121,6 +123,7 @@ func cbcInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 			stateLength = len(in) - from
 		}
 		copy(state, in[from:from+stateLength])
+		copy(tmp, state)
 
 		invCipher(state, key)
 		// XOR with previous cipher block
@@ -128,7 +131,7 @@ func cbcInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 			state[j] ^= previous[j]
 		}
 		copy(out[from:from+Nb*BytesOfWords], state)
-		copy(previous, state)
+		copy(previous, tmp)
 	}
 
 	// determine last byte (to remove padding)
@@ -243,6 +246,43 @@ func ofbInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	return ofbCipher(in, key, iv, numOfBlocks)
 }
 
-func ctrCipher(in, key, feedback []byte) []byte {
-	return in
+func ctrCipher(in, key, iv []byte, numOfBlocks int) []byte {
+	out := make([]byte, numOfBlocks*Nb*BytesOfWords)
+	previous := make([]byte, Nb*BytesOfWords)
+
+	nonce := make([]byte, (Nb/2)*BytesOfWords)
+	copy(nonce, iv[:(Nb/2)*BytesOfWords])
+	counter := binary.BigEndian.Uint64(iv[(Nb/2)*BytesOfWords:])
+
+	var end int
+	for i := 0; i < numOfBlocks; i++ {
+		state := make([]byte, Nb*BytesOfWords)
+		from := i * Nb * BytesOfWords
+		to := (i + 1) * Nb * BytesOfWords
+
+		stateLength := to - from
+		if i == numOfBlocks-1 && to > len(in) {
+			stateLength = len(in) - from
+		}
+		copy(state, in[from:from+stateLength])
+
+		copy(previous, nonce)
+		binary.BigEndian.PutUint64(previous[(Nb/2)*BytesOfWords:], uint64(counter))
+		cipher(previous, key)
+		// XOR with previous cipher block
+		for j := 0; j < Nb*BytesOfWords; j++ {
+			state[j] ^= previous[j]
+		}
+		copy(out[from:from+Nb*BytesOfWords], state)
+		counter++
+
+		if stateLength < Nb*BytesOfWords {
+			end = Nb*BytesOfWords - stateLength
+		}
+	}
+	return out[:len(out)-end]
+}
+
+func ctrInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
+	return ctrCipher(in, key, iv, numOfBlocks)
 }
