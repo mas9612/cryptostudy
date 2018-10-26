@@ -184,32 +184,32 @@ func InvCipher(in, key []byte) []byte {
 
 func cipher(state, key []byte) {
 	round := 0
-	addRoundKey(state, key, round)
+	addRoundKey(state, key[:Nb*BytesOfWords])
 
 	for round = 1; round < Nr; round++ {
 		subBytes(state)
 		shiftRows(state)
 		mixColumns(state)
-		addRoundKey(state, key, round)
+		addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
 	}
 
 	subBytes(state)
 	shiftRows(state)
-	addRoundKey(state, key, round)
+	addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
 }
 
 func invCipher(state, key []byte) {
 	round := Nr
-	addRoundKey(state, key, round)
+	addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
 
 	for round = Nr - 1; round > 0; round-- {
 		invShiftRows(state)
 		invSubBytes(state)
-		addRoundKey(state, key, round)
+		addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
 		invMixColumns(state)
 	}
 
 	invShiftRows(state)
 	invSubBytes(state)
-	addRoundKey(state, key, round)
+	addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
 }

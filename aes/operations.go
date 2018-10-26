@@ -77,9 +77,9 @@ func mixColumns(state []byte) {
 	}
 }
 
-func addRoundKey(state, key []byte, round int) {
+func addRoundKey(state, key []byte) {
 	for i := 0; i < Nb*BytesOfWords; i++ {
-		state[i] ^= key[round*BlockSize128*BytesOfWords+i]
+		state[i] ^= key[i]
 	}
 }
 

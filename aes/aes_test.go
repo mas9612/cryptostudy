@@ -322,7 +322,7 @@ func TestAddRoundKey(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		addRoundKey(input, keys[i], 0)
+		addRoundKey(input, keys[i])
 		if !bytes.Equal(input, expected[i]) {
 			t.Errorf("[TestAddRoundKey] Case %d failed: input != expected : '%v' != '%v'", i, input, expected[i])
 		}
