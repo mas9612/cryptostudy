@@ -3,11 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/mas9612/cryptostudy/aes"
 	"io/ioutil"
 	"os"
 	"strconv"
-
-	"github.com/mas9612/cryptostudy/aes"
 )
 
 func main() {
@@ -33,8 +32,8 @@ func main() {
 	if *key == "" {
 		fmt.Println("Missing -K")
 		os.Exit(1)
-	} else if len(*key) != 32 {
-		fmt.Println("Key must be 16 bytes length")
+	} else if len(*key) != 32 && len(*key) != 48 && len(*key) != 64 {
+		fmt.Println("Key must be one of 16, 24, 32 bytes length: ", len(*key)/2)
 		os.Exit(1)
 	}
 
