@@ -81,11 +81,9 @@ func invShiftRows(state []byte) {
 	tmp := make([]byte, Nb*BytesOfWords)
 	copy(tmp, state)
 
-	for i := 1; i < BytesOfWords; i++ { // i is a row index
-		colOffset := i
-		for j := 0; j < Nb; j++ { // j is a column index
-			column := (j + colOffset) % Nb
-			state[column*4+i] = tmp[j*4+i]
+	for y := 0; y < Nb; y++ {
+		for x := 1; x < BytesOfWords; x++ {
+			state[x+y*BytesOfWords] = tmp[x+BytesOfWords*((y+Nb-x)%BytesOfWords)]
 		}
 	}
 }
