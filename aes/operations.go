@@ -100,10 +100,9 @@ func invMixColumns(state []byte) {
 	tmp := make([]byte, Nb*BytesOfWords)
 	copy(tmp, state)
 
-	for i := 0; i < Nb; i++ {
-		state[i*4] = mul(tmp[i*4], 0x0e) ^ mul(tmp[i*4+1], 0x0b) ^ mul(tmp[i*4+2], 0x0d) ^ mul(tmp[i*4+3], 0x09)
-		state[i*4+1] = mul(tmp[i*4+1], 0x0e) ^ mul(tmp[i*4+2], 0x0b) ^ mul(tmp[i*4+3], 0x0d) ^ mul(tmp[i*4], 0x09)
-		state[i*4+2] = mul(tmp[i*4+2], 0x0e) ^ mul(tmp[i*4+3], 0x0b) ^ mul(tmp[i*4], 0x0d) ^ mul(tmp[i*4+1], 0x09)
-		state[i*4+3] = mul(tmp[i*4+3], 0x0e) ^ mul(tmp[i*4], 0x0b) ^ mul(tmp[i*4+1], 0x0d) ^ mul(tmp[i*4+2], 0x09)
+	for y := 0; y < Nb; y++ {
+		for x := 0; x < BytesOfWords; x++ {
+			state[y*BytesOfWords+x] = mul(invPolyMatrix[x][0], tmp[y*BytesOfWords]) ^ mul(invPolyMatrix[x][1], tmp[y*BytesOfWords+1]) ^ mul(invPolyMatrix[x][2], tmp[y*BytesOfWords+2]) ^ mul(invPolyMatrix[x][3], tmp[y*BytesOfWords+3])
+		}
 	}
 }
