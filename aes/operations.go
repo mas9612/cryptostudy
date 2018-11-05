@@ -48,32 +48,26 @@ func subBytes(state []byte) {
 }
 
 func shiftRows(state []byte) {
-	tmp := make([]byte, Nb*BytesOfWords)
-	copy(tmp, state)
+	l := len(state)
+	t := make([]byte, l)
+	copy(t, state)
 
-	for i := 1; i < BytesOfWords; i++ { // i is a row index
-		colOffset := i
-		for j := 0; j < Nb; j++ { // j is a column index
-			column := (j + colOffset) % Nb
-			state[j*4+i] = tmp[column*4+i]
+	for y := 0; y < Nb; y++ {
+		for x := 1; x < BytesOfWords; x++ {
+			state[x+y*Nb] = t[x+Nb*((x+y)%BytesOfWords)]
 		}
 	}
 }
 
 func mixColumns(state []byte) {
-	bytes := make([]byte, Nb*BytesOfWords)
-	copy(bytes, state)
+	l := len(state)
+	tmp := make([]byte, l)
+	copy(tmp, state)
 
-	for i := 0; i < Nb; i++ {
-		mulBy2 := make([]byte, BytesOfWords)
-		for j := 0; j < BytesOfWords; j++ {
-			mulBy2[j] = mul(bytes[i*4+j], 2)
+	for y := 0; y < Nb; y++ {
+		for x := 0; x < l/Nb; x++ {
+			state[y*BytesOfWords+x] = mul(polyMatrix[x][0], tmp[y*BytesOfWords]) ^ mul(polyMatrix[x][1], tmp[y*BytesOfWords+1]) ^ mul(polyMatrix[x][2], tmp[y*BytesOfWords+2]) ^ mul(polyMatrix[x][3], tmp[y*BytesOfWords+3])
 		}
-
-		state[i*4] = mulBy2[0] ^ (mulBy2[1] ^ bytes[i*4+1]) ^ bytes[i*4+2] ^ bytes[i*4+3]
-		state[i*4+1] = mulBy2[1] ^ (mulBy2[2] ^ bytes[i*4+2]) ^ bytes[i*4+0] ^ bytes[i*4+3]
-		state[i*4+2] = mulBy2[2] ^ (mulBy2[3] ^ bytes[i*4+3]) ^ bytes[i*4+0] ^ bytes[i*4+1]
-		state[i*4+3] = mulBy2[3] ^ (mulBy2[0] ^ bytes[i*4+0]) ^ bytes[i*4+1] ^ bytes[i*4+2]
 	}
 }
 
@@ -87,11 +81,9 @@ func invShiftRows(state []byte) {
 	tmp := make([]byte, Nb*BytesOfWords)
 	copy(tmp, state)
 
-	for i := 1; i < BytesOfWords; i++ { // i is a row index
-		colOffset := i
-		for j := 0; j < Nb; j++ { // j is a column index
-			column := (j + colOffset) % Nb
-			state[column*4+i] = tmp[j*4+i]
+	for y := 0; y < Nb; y++ {
+		for x := 1; x < BytesOfWords; x++ {
+			state[x+y*BytesOfWords] = tmp[x+BytesOfWords*((y+Nb-x)%BytesOfWords)]
 		}
 	}
 }
@@ -105,13 +97,12 @@ func invSubBytes(state []byte) {
 }
 
 func invMixColumns(state []byte) {
-	bytes := make([]byte, Nb*BytesOfWords)
-	copy(bytes, state)
+	tmp := make([]byte, Nb*BytesOfWords)
+	copy(tmp, state)
 
-	for i := 0; i < Nb; i++ {
-		state[i*4] = mul(bytes[i*4], 0x0e) ^ mul(bytes[i*4+1], 0x0b) ^ mul(bytes[i*4+2], 0x0d) ^ mul(bytes[i*4+3], 0x09)
-		state[i*4+1] = mul(bytes[i*4+1], 0x0e) ^ mul(bytes[i*4+2], 0x0b) ^ mul(bytes[i*4+3], 0x0d) ^ mul(bytes[i*4], 0x09)
-		state[i*4+2] = mul(bytes[i*4+2], 0x0e) ^ mul(bytes[i*4+3], 0x0b) ^ mul(bytes[i*4], 0x0d) ^ mul(bytes[i*4+1], 0x09)
-		state[i*4+3] = mul(bytes[i*4+3], 0x0e) ^ mul(bytes[i*4], 0x0b) ^ mul(bytes[i*4+1], 0x0d) ^ mul(bytes[i*4+2], 0x09)
+	for y := 0; y < Nb; y++ {
+		for x := 0; x < BytesOfWords; x++ {
+			state[y*BytesOfWords+x] = mul(invPolyMatrix[x][0], tmp[y*BytesOfWords]) ^ mul(invPolyMatrix[x][1], tmp[y*BytesOfWords+1]) ^ mul(invPolyMatrix[x][2], tmp[y*BytesOfWords+2]) ^ mul(invPolyMatrix[x][3], tmp[y*BytesOfWords+3])
+		}
 	}
 }
