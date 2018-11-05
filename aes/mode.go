@@ -27,7 +27,7 @@ func ecbCipher(in, key []byte, numOfBlocks int) []byte {
 			}
 		}
 
-		cipher(state, key)
+		blockCipher(state, key)
 		copy(out[from:from+Nb*BytesOfWords], state)
 	}
 	return out
@@ -95,7 +95,7 @@ func cbcCipher(in, key, iv []byte, numOfBlocks int) []byte {
 			state[j] ^= previous[j]
 		}
 
-		cipher(state, key)
+		blockCipher(state, key)
 		copy(out[from:from+Nb*BytesOfWords], state)
 		// save cipher block for next block
 		copy(previous, state)
@@ -162,7 +162,7 @@ func cfbCipher(in, key, iv []byte, numOfBlocks int) []byte {
 		}
 		copy(state, in[from:from+stateLength])
 
-		cipher(previous, key)
+		blockCipher(previous, key)
 		// XOR with previous cipher block
 		for j := 0; j < Nb*BytesOfWords; j++ {
 			state[j] ^= previous[j]
@@ -196,7 +196,7 @@ func cfbInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 		copy(state, in[from:from+stateLength])
 		copy(tmp, state)
 
-		cipher(previous, key)
+		blockCipher(previous, key)
 		// XOR with previous cipher block
 		for j := 0; j < Nb*BytesOfWords; j++ {
 			state[j] ^= previous[j]
@@ -228,7 +228,7 @@ func ofbCipher(in, key, iv []byte, numOfBlocks int) []byte {
 		}
 		copy(state, in[from:from+stateLength])
 
-		cipher(previous, key)
+		blockCipher(previous, key)
 		// XOR with previous cipher block
 		for j := 0; j < Nb*BytesOfWords; j++ {
 			state[j] ^= previous[j]
@@ -268,7 +268,7 @@ func ctrCipher(in, key, iv []byte, numOfBlocks int) []byte {
 
 		copy(previous, nonce)
 		binary.BigEndian.PutUint64(previous[(Nb/2)*BytesOfWords:], uint64(counter))
-		cipher(previous, key)
+		blockCipher(previous, key)
 		// XOR with previous cipher block
 		for j := 0; j < Nb*BytesOfWords; j++ {
 			state[j] ^= previous[j]
