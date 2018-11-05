@@ -59,21 +59,15 @@ func shiftRows(state []byte) {
 		}
 	}
 }
-
 func mixColumns(state []byte) {
-	bytes := make([]byte, Nb*BytesOfWords)
+	l := len(state)
+	bytes := make([]byte, l)
 	copy(bytes, state)
 
-	for i := 0; i < Nb; i++ {
-		mulBy2 := make([]byte, BytesOfWords)
-		for j := 0; j < BytesOfWords; j++ {
-			mulBy2[j] = mul(bytes[i*4+j], 2)
+	for y := 0; y < Nb; y++ {
+		for x := 0; x < l/Nb; x++ {
+			state[y*BytesOfWords+x] = mul(polyMatrix[x][0], bytes[y*BytesOfWords]) ^ mul(polyMatrix[x][1], bytes[y*BytesOfWords+1]) ^ mul(polyMatrix[x][2], bytes[y*BytesOfWords+2]) ^ mul(polyMatrix[x][3], bytes[y*BytesOfWords+3])
 		}
-
-		state[i*4] = mulBy2[0] ^ (mulBy2[1] ^ bytes[i*4+1]) ^ bytes[i*4+2] ^ bytes[i*4+3]
-		state[i*4+1] = mulBy2[1] ^ (mulBy2[2] ^ bytes[i*4+2]) ^ bytes[i*4+0] ^ bytes[i*4+3]
-		state[i*4+2] = mulBy2[2] ^ (mulBy2[3] ^ bytes[i*4+3]) ^ bytes[i*4+0] ^ bytes[i*4+1]
-		state[i*4+3] = mulBy2[3] ^ (mulBy2[0] ^ bytes[i*4+0]) ^ bytes[i*4+1] ^ bytes[i*4+2]
 	}
 }
 
