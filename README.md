@@ -20,4 +20,8 @@ Usage of AES:
         Cipher mode. Valid mode is one of [ECB, CBC, CFB, OFB, CTR]
   -r int
         Print round N result (default -1)
+
+$ go build ./cmd/extgcd
+$ ./extgcd 5 13
+8
 ```
