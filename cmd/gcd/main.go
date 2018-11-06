@@ -7,23 +7,17 @@ import (
 )
 
 func main() {
-	fs := flag.NewFlagSet("GCD", flag.ExitOnError)
-	a := fs.Int("a", 0, "a of gcd(a,b) , don't allowd 0")
-	b := fs.Int("b", 0, "b of gcd(a,b), don't allowd 0")
-	v := fs.Bool("v", false, "Print intermediate calculation")
-	help := fs.Bool("help", false, "Print help and exit")
-
-	err := fs.Parse(os.Args[1:])
-	if err != nil {
-		fmt.Println("Failed to parse command line arguments")
-		os.Exit(1)
-	}
+	a := flag.Int("a", 0, "a of gcd(a,b) , don't allowd 0")
+	b := flag.Int("b", 0, "b of gcd(a,b), don't allowd 0")
+	v := flag.Bool("v", false, "Print intermediate calculation")
+	help := flag.Bool("help", false, "Print help and exit")
+	flag.Parse()
 	if *help {
-		fs.Usage()
+		flag.Usage()
 		os.Exit(0)
 	}
 	if *a == 0 || *b == 0 {
-		fs.Usage()
+		flag.Usage()
 		os.Exit(1)
 	}
 	if *v == true {
