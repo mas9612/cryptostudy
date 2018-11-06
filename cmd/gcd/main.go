@@ -1,33 +1,60 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"log"
 	"os"
-	"strconv"
 )
 
 func main() {
-	if len(os.Args) < 3 {
-		fmt.Println("Usage: gcd NUMA NUMB")
+	a := flag.Int("a", 0, "a of gcd(a,b) , don't allowd 0")
+	b := flag.Int("b", 0, "b of gcd(a,b), don't allowd 0")
+	v := flag.Bool("v", false, "Print intermediate calculation")
+	help := flag.Bool("help", false, "Print help and exit")
+	flag.Parse()
+	if *help {
+		flag.Usage()
+		os.Exit(0)
+	}
+	if *a == 0 || *b == 0 {
+		flag.Usage()
 		os.Exit(1)
 	}
-	a, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		log.Fatalln(err)
+	if *v == true {
+		fmt.Println(gcd(*a, *b, WithVerbose(true)))
+	} else {
+		fmt.Println(gcd(*a, *b, WithVerbose(false)))
 	}
-	b, err := strconv.Atoi(os.Args[2])
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Println(gcd(a, b))
 }
 
-func gcd(a, b int) int {
+type gcdOptions struct {
+	verbose bool
+}
+
+type GcdOption func(*gcdOptions)
+
+func WithVerbose(verbose bool) GcdOption {
+	return func(ops *gcdOptions) {
+		ops.verbose = verbose
+	}
+}
+
+func gcd(a, b int, options ...GcdOption) int {
+	opt := gcdOptions{}
+	for _, o := range options {
+		o(&opt)
+	}
+
 	if b == 0 {
+		if opt.verbose == true { // Print intermediate calculation
+			fmt.Printf("gcd = %d\n", a)
+		}
 		return a
 	} else {
 		reminder := a % b
-		return gcd(b, reminder)
+		if opt.verbose == true { // Print intermediate calculation
+			fmt.Printf("%d %% %d = %d\n", a, b, reminder)
+		}
+		return gcd(b, reminder, WithVerbose(opt.verbose))
 	}
 }
