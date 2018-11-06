@@ -101,37 +101,26 @@ func blockCipher(state, key []byte) {
 		fmt.Printf("[Round %d]\n", round)
 	}
 	addRoundKey(state, key[:Nb*BytesOfWords])
-	if round == PrintNRound {
-		fmt.Print("After AddRoundKey: ")
-		printBytes(state)
-	}
+	printRoundBytes(state, round, "AddRoundKey")
 
 	for round = 1; round <= Nr; round++ {
 		if round == PrintNRound {
 			fmt.Printf("[Round %d]\n", round)
 		}
 		subBytes(state)
-		if round == PrintNRound {
-			fmt.Print("After SubBytes: ")
-			printBytes(state)
-		}
+		printRoundBytes(state, round, "SubBytes")
+
 		shiftRows(state)
-		if round == PrintNRound {
-			fmt.Print("After ShiftRows: ")
-			printBytes(state)
-		}
+		printRoundBytes(state, round, "ShiftRows")
+
 		if round < Nr {
 			mixColumns(state)
-			if round == PrintNRound {
-				fmt.Print("After MixColumns: ")
-				printBytes(state)
-			}
+			printRoundBytes(state, round, "MixColumns")
+
 		}
 		addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
-		if round == PrintNRound {
-			fmt.Print("After AddRoundKey: ")
-			printBytes(state)
-		}
+		printRoundBytes(state, round, "AddRoundKey")
+
 	}
 }
 
@@ -141,36 +130,25 @@ func invCipher(state, key []byte) {
 		fmt.Printf("[Round %d]\n", round)
 	}
 	addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
-	if round == PrintNRound {
-		fmt.Print("After AddRoundKey: ")
-		printBytes(state)
-	}
+	printRoundBytes(state, round, "AddRoundKey")
 
 	for round = Nr - 1; round >= 0; round-- {
 		if round == PrintNRound {
 			fmt.Printf("[Round %d]\n", round)
 		}
 		invShiftRows(state)
-		if round == PrintNRound {
-			fmt.Print("After InvShiftRows: ")
-			printBytes(state)
-		}
+		printRoundBytes(state, round, "InvShiftRows")
+
 		invSubBytes(state)
-		if round == PrintNRound {
-			fmt.Print("After InvSubBytes: ")
-			printBytes(state)
-		}
+		printRoundBytes(state, round, "InvSubBytes")
+
 		addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
-		if round == PrintNRound {
-			fmt.Print("After AddRoundKey: ")
-			printBytes(state)
-		}
+		printRoundBytes(state, round, "AddRoundKey")
+
 		if round > 0 {
 			invMixColumns(state)
-			if round == PrintNRound {
-				fmt.Print("After InvMixColumns: ")
-				printBytes(state)
-			}
+			printRoundBytes(state, round, "InvMixColumns")
+
 		}
 	}
 }
