@@ -1,33 +1,66 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"log"
 	"os"
-	"strconv"
 )
 
 func main() {
-	if len(os.Args) < 3 {
-		fmt.Println("Usage: gcd NUMA NUMB")
+	fs := flag.NewFlagSet("GCD", flag.ExitOnError)
+	a := fs.Int("a", 0, "a of gcd(a,b) , don't allowd 0")
+	b := fs.Int("b", 0, "b of gcd(a,b), don't allowd 0")
+	v := fs.Bool("v", false, "Print intermediate calculation")
+	help := fs.Bool("help", false, "Print help and exit")
+
+	err := fs.Parse(os.Args[1:])
+	if err != nil {
+		fmt.Println("Failed to parse command line arguments")
 		os.Exit(1)
 	}
-	a, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		log.Fatalln(err)
+	if *help {
+		fs.Usage()
+		os.Exit(0)
 	}
-	b, err := strconv.Atoi(os.Args[2])
-	if err != nil {
-		log.Fatalln(err)
+	if *a == 0 || *b == 0 {
+		fs.Usage()
+		os.Exit(1)
 	}
-	fmt.Println(gcd(a, b))
+	if *v == true {
+		fmt.Println(gcd(*a, *b, WithVerbose(true)))
+	} else {
+		fmt.Println(gcd(*a, *b, WithVerbose(false)))
+	}
 }
 
-func gcd(a, b int) int {
+type gcdOptions struct {
+	verbose bool
+}
+
+type GcdOption func(*gcdOptions)
+
+func WithVerbose(verbose bool) GcdOption {
+	return func(ops *gcdOptions) {
+		ops.verbose = verbose
+	}
+}
+
+func gcd(a, b int, options ...GcdOption) int {
+	opt := gcdOptions{}
+	for _, o := range options {
+		o(&opt)
+	}
+
 	if b == 0 {
+		if opt.verbose == true { // Print intermediate calculation
+			fmt.Printf("gcd = %d\n", a)
+		}
 		return a
 	} else {
 		reminder := a % b
-		return gcd(b, reminder)
+		if opt.verbose == true { // Print intermediate calculation
+			fmt.Printf("%d %% %d = %d\n", a, b, reminder)
+		}
+		return gcd(b, reminder, WithVerbose(opt.verbose))
 	}
 }

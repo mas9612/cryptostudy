@@ -16,7 +16,7 @@ func TestGcd(t *testing.T) {
 		a, b := input[0], input[1]
 		result := gcd(a, b)
 		if result != expected[i] {
-			t.Errorf("[TestGcd] case %d failed: gcd(%d, %d) = '%d' , expected '%d'", i, a, b, result, expected[i])
+			t.Errorf("[TestGcd] case %d failed: gcd(%d , %d) = '%d' , expected '%d'", i, a, b, result, expected[i])
 		}
 	}
 }
