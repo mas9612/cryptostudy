@@ -27,7 +27,14 @@ func mul(n, p byte) byte {
 
 func printBytes(bytes []byte) {
 	for _, b := range bytes {
-		fmt.Printf("%02x", b)
+		fmt.Printf("%#02x  ", b)
 	}
-	fmt.Print("\n")
+	fmt.Printf("\n")
+}
+
+func printRoundBytes(bytes []byte, round int, name string) {
+	if round == PrintNRound {
+		fmt.Printf("After %s: ", name)
+		printBytes(bytes)
+	}
 }

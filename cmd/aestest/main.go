@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/mas9612/cryptostudy/aes"
 	"io/ioutil"
 	"os"
 	"strconv"
+
+	"github.com/mas9612/cryptostudy/aes"
 )
 
 func main() {
