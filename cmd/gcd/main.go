@@ -9,7 +9,7 @@ import (
 
 func main() {
 	if len(os.Args) < 3 {
-		fmt.Println("Usage: inv NUMA NUMB")
+		fmt.Println("Usage: gcd NUMA NUMB")
 		os.Exit(1)
 	}
 	a, err := strconv.Atoi(os.Args[1])
