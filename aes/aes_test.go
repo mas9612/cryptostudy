@@ -90,7 +90,7 @@ func TestCipher(t *testing.T) {
 		ModeCFB,
 		ModeOFB,
 		ModeCTR,
-		ModeCBC_CTS,
+		ModeCBCCTS,
 	}
 	ivs := [][]byte{
 		[]byte{},
@@ -154,7 +154,7 @@ func TestCipher(t *testing.T) {
 	for i, input := range inputs {
 		cipherText := Cipher(input, keys[i], modes[i], ivs[i])
 		if !bytes.Equal(cipherText, expected[i]) {
-			t.Errorf("[TestCipher] case %d failed: cipherText != expected :\ncipher:\t\t%s\nexpected:\t%s", i, printableBytes(cipherText), printableBytes(expected[i]))
+			t.Errorf("[TestCipher] case %d failed: cipherText != expected :\ncipher:\t\t%s\nexpected:\t%s", i, PrintableBytes(cipherText), PrintableBytes(expected[i]))
 		}
 	}
 }
@@ -243,7 +243,7 @@ func TestInvCipher(t *testing.T) {
 		ModeCFB,
 		ModeOFB,
 		ModeCTR,
-		ModeCBC_CTS,
+		ModeCBCCTS,
 	}
 	ivs := [][]byte{
 		[]byte{},
@@ -307,7 +307,7 @@ func TestInvCipher(t *testing.T) {
 	for i, input := range inputs {
 		plainText := InvCipher(input, keys[i], modes[i], ivs[i])
 		if !bytes.Equal(plainText, expected[i]) {
-			t.Errorf("[TestInvCipher] case %d failed: plainText != expected :\nplain:\t\t%s\nexpected:\t%s", i, printableBytes(plainText), printableBytes(expected[i]))
+			t.Errorf("[TestInvCipher] case %d failed: plainText != expected :\nplain:\t\t%s\nexpected:\t%s", i, PrintableBytes(plainText), PrintableBytes(expected[i]))
 		}
 	}
 }
@@ -367,7 +367,7 @@ func TestBlockCipher(t *testing.T) {
 		keyExpansion(keys[i], expandedKey)
 		blockCipher(input, expandedKey)
 		if !bytes.Equal(input, expected[i]) {
-			t.Errorf("[TestBlockCipher] case %d failed: cipherText != expected :\ncipher:\t\t%s\nexpected:\t%s", i, printableBytes(input), printableBytes(expected[i]))
+			t.Errorf("[TestBlockCipher] case %d failed: cipherText != expected :\ncipher:\t\t%s\nexpected:\t%s", i, PrintableBytes(input), PrintableBytes(expected[i]))
 		}
 	}
 }
@@ -427,7 +427,7 @@ func TestInvBlockCipher(t *testing.T) {
 		keyExpansion(keys[i], expandedKey)
 		invBlockCipher(input, expandedKey)
 		if !bytes.Equal(input, expected[i]) {
-			t.Errorf("[TestInvBlockCipher] case %d failed: plainText != expected :\nplain:\t\t%s\nexpected:\t%s", i, printableBytes(input), printableBytes(expected[i]))
+			t.Errorf("[TestInvBlockCipher] case %d failed: plainText != expected :\nplain:\t\t%s\nexpected:\t%s", i, PrintableBytes(input), PrintableBytes(expected[i]))
 		}
 	}
 }

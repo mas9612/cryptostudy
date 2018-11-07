@@ -31,8 +31,10 @@ type gcdOptions struct {
 	verbose bool
 }
 
+// GcdOption is a method to set appropriate option to gcdOptions struct
 type GcdOption func(*gcdOptions)
 
+// WithVerbose set option to increase verbosity in gcd()
 func WithVerbose(verbose bool) GcdOption {
 	return func(ops *gcdOptions) {
 		ops.verbose = verbose
@@ -50,11 +52,10 @@ func gcd(a, b int, options ...GcdOption) int {
 			fmt.Printf("gcd = %d\n", a)
 		}
 		return a
-	} else {
-		reminder := a % b
-		if opt.verbose == true { // Print intermediate calculation
-			fmt.Printf("%d %% %d = %d\n", a, b, reminder)
-		}
-		return gcd(b, reminder, WithVerbose(opt.verbose))
 	}
+	reminder := a % b
+	if opt.verbose == true { // Print intermediate calculation
+		fmt.Printf("%d %% %d = %d\n", a, b, reminder)
+	}
+	return gcd(b, reminder, WithVerbose(opt.verbose))
 }
