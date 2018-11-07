@@ -13,7 +13,7 @@ import (
 func main() {
 	fs := flag.NewFlagSet("AES", flag.ExitOnError)
 	key := fs.String("K", "", "Encrypt key (hexadecimal notation)")
-	mode := fs.String("mode", "", "Cipher mode. Valid mode is one of [ECB, CBC, CFB, OFB, CTR]")
+	mode := fs.String("mode", "", "Cipher mode. Valid mode is one of [ECB, CBC, CFB, OFB, CTR, CBC_CTS]")
 	iv := fs.String("iv", "", "IV")
 	round := fs.Int("r", -1, "Print round N result")
 	decrypt := fs.Bool("d", false, "Decrypt (Default Encrypt)")
@@ -43,7 +43,7 @@ func main() {
 		os.Exit(1)
 	}
 	switch *mode {
-	case "CBC", "CFB", "OFB", "CTR":
+	case "CBC", "CBC_CTS", "CFB", "OFB", "CTR":
 		if *iv == "" {
 			fmt.Println("Missing -iv")
 			os.Exit(1)
@@ -63,6 +63,8 @@ func main() {
 		cipherMode = aes.ModeECB
 	case "CBC":
 		cipherMode = aes.ModeCBC
+	case "CBC_CTS":
+		cipherMode = aes.ModeCBC_CTS
 	case "CFB":
 		cipherMode = aes.ModeCFB
 	case "OFB":

@@ -44,6 +44,8 @@ func Cipher(in []byte, key []byte, mode int, iv []byte) []byte {
 		out = ofbCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeCTR:
 		out = ctrCipher(in, expandedKey, iv, numOfBlocks)
+	case ModeCBC_CTS:
+		out = cbcCtsCipher(in, expandedKey, iv, numOfBlocks)
 	default:
 		log.Fatalln("Invalid encryption mode")
 	}
@@ -89,6 +91,8 @@ func InvCipher(in, key []byte, mode int, iv []byte) []byte {
 		out = ofbInvCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeCTR:
 		out = ctrInvCipher(in, expandedKey, iv, numOfBlocks)
+	case ModeCBC_CTS:
+		out = cbcCtsInvCipher(in, expandedKey, iv, numOfBlocks)
 	default:
 		log.Fatalln("Invalid encryption mode")
 	}
@@ -124,7 +128,7 @@ func blockCipher(state, key []byte) {
 	}
 }
 
-func invCipher(state, key []byte) {
+func invBlockCipher(state, key []byte) {
 	round := Nr
 	if round == PrintNRound {
 		fmt.Printf("[Round %d]\n", round)
