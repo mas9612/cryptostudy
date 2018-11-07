@@ -307,7 +307,7 @@ func TestInvCipher(t *testing.T) {
 	for i, input := range inputs {
 		plainText := InvCipher(input, keys[i], modes[i], ivs[i])
 		if !bytes.Equal(plainText, expected[i]) {
-			t.Errorf("[TestInvCipher] case %d failed: cipherText != expected :\ncipher:\t\t%s\nexpected:\t%s", i, printableBytes(plainText), printableBytes(expected[i]))
+			t.Errorf("[TestInvCipher] case %d failed: plainText != expected :\nplain:\t\t%s\nexpected:\t%s", i, printableBytes(plainText), printableBytes(expected[i]))
 		}
 	}
 }
