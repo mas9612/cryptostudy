@@ -128,7 +128,7 @@ func blockCipher(state, key []byte) {
 	}
 }
 
-func invCipher(state, key []byte) {
+func invBlockCipher(state, key []byte) {
 	round := Nr
 	if round == PrintNRound {
 		fmt.Printf("[Round %d]\n", round)

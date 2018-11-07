@@ -47,7 +47,7 @@ func ecbInvCipher(in, key []byte, numOfBlocks int) []byte {
 		}
 		copy(state, in[from:from+stateLength])
 
-		invCipher(state, key)
+		invBlockCipher(state, key)
 		copy(out[from:from+Nb*BytesOfWords], state)
 	}
 
@@ -125,7 +125,7 @@ func cbcInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 		copy(state, in[from:from+stateLength])
 		copy(tmp, state)
 
-		invCipher(state, key)
+		invBlockCipher(state, key)
 		// XOR with previous cipher block
 		for j := 0; j < Nb*BytesOfWords; j++ {
 			state[j] ^= previous[j]
@@ -201,7 +201,7 @@ func cbcCtsInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 		from := i * Nb * BytesOfWords
 		copy(state, in[from:from+stateLength])
 		copy(tmp, state)
-		invCipher(state, key)
+		invBlockCipher(state, key)
 		// XOR with previous cipher block
 		for j := 0; j < stateLength; j++ {
 			state[j] ^= previous[j]
@@ -216,7 +216,7 @@ func cbcCtsInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	lastBlockLength := len(in) % (Nb * BytesOfWords)
 
 	copy(stateN_1, in[len(in)-lastBlockLength-stateLength:len(in)-lastBlockLength])
-	invCipher(stateN_1, key)
+	invBlockCipher(stateN_1, key)
 	copy(stateN[:lastBlockLength], in[len(in)-lastBlockLength:])
 	copy(stateN[lastBlockLength:], stateN_1[lastBlockLength:])
 
@@ -226,7 +226,7 @@ func cbcCtsInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	}
 	copy(out[len(in)-lastBlockLength:], stateN_1[:lastBlockLength])
 
-	invCipher(stateN, key)
+	invBlockCipher(stateN, key)
 	// XOR with previous cipher block
 	for j := 0; j < stateLength; j++ {
 		stateN[j] ^= previous[j]
