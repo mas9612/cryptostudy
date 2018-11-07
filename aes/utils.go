@@ -25,16 +25,19 @@ func mul(n, p byte) byte {
 	return n
 }
 
-func printBytes(bytes []byte) {
-	for _, b := range bytes {
-		fmt.Printf("%#02x  ", b)
+func printableBytes(bytes []byte) (str string) {
+	str = ""
+	for i, b := range bytes {
+		str += fmt.Sprintf("%#02x", b)
+		if i != len(bytes)-1 {
+			str += " "
+		}
 	}
-	fmt.Printf("\n")
+	return
 }
 
-func printRoundBytes(bytes []byte, round int, name string) {
+func printRoundBytes(bytes []byte, round int, phase string) {
 	if round == PrintNRound {
-		fmt.Printf("After %s: ", name)
-		printBytes(bytes)
+		fmt.Printf("After %s: %s\n", phase, printableBytes(bytes))
 	}
 }
