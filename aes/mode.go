@@ -226,6 +226,7 @@ func cbcCtsInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	}
 	copy(out[len(in)-lastBlockLength:], stateN_1[:lastBlockLength])
 
+	invCipher(stateN, key)
 	// XOR with previous cipher block
 	for j := 0; j < stateLength; j++ {
 		stateN[j] ^= previous[j]
