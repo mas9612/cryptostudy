@@ -7,8 +7,8 @@ import (
 )
 
 func main() {
-	a := flag.Int("a", 0, "a of gcd(a,b) , don't allowd 0")
-	b := flag.Int("b", 0, "b of gcd(a,b), don't allowd 0")
+	a := flag.Int("a", 0, "a of gcd(a,b) , don't allowed 0")
+	b := flag.Int("b", 0, "b of gcd(a,b), don't allowed 0")
 	v := flag.Bool("v", false, "Print intermediate calculation")
 	help := flag.Bool("help", false, "Print help and exit")
 	flag.Parse()
