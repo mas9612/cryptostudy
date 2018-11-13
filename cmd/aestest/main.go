@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/mas9612/cryptostudy/aes"
+	"github.com/mas9612/cryptostudy/pkg/aes"
 )
 
 func main() {

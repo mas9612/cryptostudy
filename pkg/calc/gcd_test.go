@@ -1,4 +1,4 @@
-package main
+package calc
 
 import "testing"
 
@@ -14,7 +14,7 @@ func TestGcd(t *testing.T) {
 
 	for i, input := range inputs {
 		a, b := input[0], input[1]
-		result := gcd(a, b)
+		result := Gcd(a, b)
 		if result != expected[i] {
 			t.Errorf("[TestGcd] case %d failed: gcd(%d , %d) = '%d' , expected '%d'", i, a, b, result, expected[i])
 		}
