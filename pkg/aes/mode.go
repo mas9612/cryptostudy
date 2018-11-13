@@ -5,7 +5,8 @@ import (
 	"log"
 )
 
-func ecbCipher(in, key []byte, numOfBlocks int) []byte {
+// ECBCipher encrypts given plain text with ECB mode
+func ECBCipher(in, key []byte, numOfBlocks int) []byte {
 	out := make([]byte, numOfBlocks*Nb*BytesOfWords)
 
 	for i := 0; i < numOfBlocks; i++ {
@@ -33,7 +34,8 @@ func ecbCipher(in, key []byte, numOfBlocks int) []byte {
 	return out
 }
 
-func ecbInvCipher(in, key []byte, numOfBlocks int) []byte {
+// ECBInvCipher decrypts given cipher text with ECB mode
+func ECBInvCipher(in, key []byte, numOfBlocks int) []byte {
 	out := make([]byte, numOfBlocks*Nb*BytesOfWords)
 
 	for i := 0; i < numOfBlocks; i++ {
@@ -62,7 +64,8 @@ func ecbInvCipher(in, key []byte, numOfBlocks int) []byte {
 	return out[:end]
 }
 
-func cbcCipher(in, key, iv []byte, numOfBlocks int) []byte {
+// CBCCipher encrypts given plain text with CBC mode
+func CBCCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	if len(iv) != Nb*BytesOfWords {
 		log.Fatalf("IV must be same as block size (%d byte)", Nb*BytesOfWords)
 	}
@@ -103,7 +106,8 @@ func cbcCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	return out
 }
 
-func cbcInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
+// CBCInvCipher decrypts given cipher text with CBC mode
+func CBCInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	if len(iv) != Nb*BytesOfWords {
 		log.Fatalf("IV must be same as block size (%d byte)", Nb*BytesOfWords)
 	}
@@ -145,7 +149,8 @@ func cbcInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	return out[:end]
 }
 
-func cbcCtsCipher(in, key, iv []byte, numOfBlocks int) []byte {
+// CBCCTSCipher decrypts given cipher text with CBC-CTS mode
+func CBCCTSCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	if len(iv) != Nb*BytesOfWords {
 		log.Fatalf("IV must be same as block size (%d byte)", Nb*BytesOfWords)
 	}
@@ -185,7 +190,8 @@ func cbcCtsCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	return out
 }
 
-func cbcCtsInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
+// CBCCTSInvCipher decrypts given cipher text with CBC-CTS mode
+func CBCCTSInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	if len(iv) != Nb*BytesOfWords {
 		log.Fatalf("IV must be same as block size (%d byte)", Nb*BytesOfWords)
 	}
@@ -212,19 +218,19 @@ func cbcCtsInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 
 	// stateN is last cipher block & n-1th plain text block
 	stateN := make([]byte, Nb*BytesOfWords)
-	stateN_1 := make([]byte, Nb*BytesOfWords)
+	stateN1 := make([]byte, Nb*BytesOfWords)
 	lastBlockLength := len(in) % (Nb * BytesOfWords)
 
-	copy(stateN_1, in[len(in)-lastBlockLength-stateLength:len(in)-lastBlockLength])
-	invBlockCipher(stateN_1, key)
+	copy(stateN1, in[len(in)-lastBlockLength-stateLength:len(in)-lastBlockLength])
+	invBlockCipher(stateN1, key)
 	copy(stateN[:lastBlockLength], in[len(in)-lastBlockLength:])
-	copy(stateN[lastBlockLength:], stateN_1[lastBlockLength:])
+	copy(stateN[lastBlockLength:], stateN1[lastBlockLength:])
 
 	// XOR with last cipher block with padding
 	for j := 0; j < lastBlockLength; j++ {
-		stateN_1[j] ^= stateN[j]
+		stateN1[j] ^= stateN[j]
 	}
-	copy(out[len(in)-lastBlockLength:], stateN_1[:lastBlockLength])
+	copy(out[len(in)-lastBlockLength:], stateN1[:lastBlockLength])
 
 	invBlockCipher(stateN, key)
 	// XOR with previous cipher block
@@ -236,7 +242,8 @@ func cbcCtsInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	return out[:len(in)]
 }
 
-func cfbCipher(in, key, iv []byte, numOfBlocks int) []byte {
+// CFBCipher encrypts given plain text with CFB mode
+func CFBCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	out := make([]byte, numOfBlocks*Nb*BytesOfWords)
 	previous := make([]byte, Nb*BytesOfWords)
 	copy(previous, iv)
@@ -268,7 +275,8 @@ func cfbCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	return out[:len(out)-end]
 }
 
-func cfbInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
+// CFBInvCipher decrypts given cipher text with CFB mode
+func CFBInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	out := make([]byte, numOfBlocks*Nb*BytesOfWords)
 	previous := make([]byte, Nb*BytesOfWords)
 	copy(previous, iv)
@@ -302,7 +310,8 @@ func cfbInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	return out[:len(out)-end]
 }
 
-func ofbCipher(in, key, iv []byte, numOfBlocks int) []byte {
+// OFBCipher encrypts given plain text with OFB mode
+func OFBCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	out := make([]byte, numOfBlocks*Nb*BytesOfWords)
 	previous := make([]byte, Nb*BytesOfWords)
 	copy(previous, iv)
@@ -333,11 +342,13 @@ func ofbCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	return out[:len(out)-end]
 }
 
-func ofbInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
-	return ofbCipher(in, key, iv, numOfBlocks)
+// OFBInvCipher decrypts given cipher text with OFB mode
+func OFBInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
+	return OFBCipher(in, key, iv, numOfBlocks)
 }
 
-func ctrCipher(in, key, iv []byte, numOfBlocks int) []byte {
+// CTRCipher encrypts given plain text with CTR mode
+func CTRCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	out := make([]byte, numOfBlocks*Nb*BytesOfWords)
 	previous := make([]byte, Nb*BytesOfWords)
 
@@ -374,6 +385,7 @@ func ctrCipher(in, key, iv []byte, numOfBlocks int) []byte {
 	return out[:len(out)-end]
 }
 
-func ctrInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
-	return ctrCipher(in, key, iv, numOfBlocks)
+// CTRInvCipher decrypts given cipher text with CTR mode
+func CTRInvCipher(in, key, iv []byte, numOfBlocks int) []byte {
+	return CTRCipher(in, key, iv, numOfBlocks)
 }

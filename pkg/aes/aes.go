@@ -35,17 +35,17 @@ func Cipher(in []byte, key []byte, mode int, iv []byte) []byte {
 	var out []byte
 	switch mode {
 	case ModeECB:
-		out = ecbCipher(in, expandedKey, numOfBlocks)
+		out = ECBCipher(in, expandedKey, numOfBlocks)
 	case ModeCBC:
-		out = cbcCipher(in, expandedKey, iv, numOfBlocks)
+		out = CBCCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeCFB:
-		out = cfbCipher(in, expandedKey, iv, numOfBlocks)
+		out = CFBCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeOFB:
-		out = ofbCipher(in, expandedKey, iv, numOfBlocks)
+		out = OFBCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeCTR:
-		out = ctrCipher(in, expandedKey, iv, numOfBlocks)
-	case ModeCBC_CTS:
-		out = cbcCtsCipher(in, expandedKey, iv, numOfBlocks)
+		out = CTRCipher(in, expandedKey, iv, numOfBlocks)
+	case ModeCBCCTS:
+		out = CBCCTSCipher(in, expandedKey, iv, numOfBlocks)
 	default:
 		log.Fatalln("Invalid encryption mode")
 	}
@@ -82,17 +82,17 @@ func InvCipher(in, key []byte, mode int, iv []byte) []byte {
 	var out []byte
 	switch mode {
 	case ModeECB:
-		out = ecbInvCipher(in, expandedKey, numOfBlocks)
+		out = ECBInvCipher(in, expandedKey, numOfBlocks)
 	case ModeCBC:
-		out = cbcInvCipher(in, expandedKey, iv, numOfBlocks)
+		out = CBCInvCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeCFB:
-		out = cfbInvCipher(in, expandedKey, iv, numOfBlocks)
+		out = CFBInvCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeOFB:
-		out = ofbInvCipher(in, expandedKey, iv, numOfBlocks)
+		out = OFBInvCipher(in, expandedKey, iv, numOfBlocks)
 	case ModeCTR:
-		out = ctrInvCipher(in, expandedKey, iv, numOfBlocks)
-	case ModeCBC_CTS:
-		out = cbcCtsInvCipher(in, expandedKey, iv, numOfBlocks)
+		out = CTRInvCipher(in, expandedKey, iv, numOfBlocks)
+	case ModeCBCCTS:
+		out = CBCCTSInvCipher(in, expandedKey, iv, numOfBlocks)
 	default:
 		log.Fatalln("Invalid encryption mode")
 	}
@@ -104,25 +104,25 @@ func blockCipher(state, key []byte) {
 	if round == PrintNRound {
 		fmt.Printf("[Round %d]\n", round)
 	}
-	addRoundKey(state, key[:Nb*BytesOfWords])
+	AddRoundKey(state, key[:Nb*BytesOfWords])
 	printRoundBytes(state, round, "AddRoundKey")
 
 	for round = 1; round <= Nr; round++ {
 		if round == PrintNRound {
 			fmt.Printf("[Round %d]\n", round)
 		}
-		subBytes(state)
+		SubBytes(state)
 		printRoundBytes(state, round, "SubBytes")
 
-		shiftRows(state)
+		ShiftRows(state)
 		printRoundBytes(state, round, "ShiftRows")
 
 		if round < Nr {
-			mixColumns(state)
+			MixColumns(state)
 			printRoundBytes(state, round, "MixColumns")
 
 		}
-		addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
+		AddRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
 		printRoundBytes(state, round, "AddRoundKey")
 
 	}
@@ -133,24 +133,24 @@ func invBlockCipher(state, key []byte) {
 	if round == PrintNRound {
 		fmt.Printf("[Round %d]\n", round)
 	}
-	addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
+	AddRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
 	printRoundBytes(state, round, "AddRoundKey")
 
 	for round = Nr - 1; round >= 0; round-- {
 		if round == PrintNRound {
 			fmt.Printf("[Round %d]\n", round)
 		}
-		invShiftRows(state)
+		InvShiftRows(state)
 		printRoundBytes(state, round, "InvShiftRows")
 
-		invSubBytes(state)
+		InvSubBytes(state)
 		printRoundBytes(state, round, "InvSubBytes")
 
-		addRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
+		AddRoundKey(state, key[round*Nb*BytesOfWords:(round+1)*Nb*BytesOfWords])
 		printRoundBytes(state, round, "AddRoundKey")
 
 		if round > 0 {
-			invMixColumns(state)
+			InvMixColumns(state)
 			printRoundBytes(state, round, "InvMixColumns")
 
 		}

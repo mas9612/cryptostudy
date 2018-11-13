@@ -23,7 +23,7 @@ func TestMul(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		result := mul(input[0], input[1])
+		result := Mul(input[0], input[1])
 		if result != expected[i] {
 			t.Errorf("[TestMul] case %d failed: result != expected : '%v' != '%v'", i, result, expected[i])
 		}
@@ -68,7 +68,7 @@ func TestXtime(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		result := xtime(input)
+		result := Xtime(input)
 		if result != expected[i] {
 			t.Errorf("[TestXtime] case %d failed: result != expected : '%v' != '%v'", i, result, expected[i])
 		}

@@ -64,7 +64,7 @@ func main() {
 	case "CBC":
 		cipherMode = aes.ModeCBC
 	case "CBC_CTS":
-		cipherMode = aes.ModeCBC_CTS
+		cipherMode = aes.ModeCBCCTS
 	case "CFB":
 		cipherMode = aes.ModeCFB
 	case "OFB":
