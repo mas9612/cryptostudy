@@ -144,7 +144,7 @@ func TestSubBytes(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		subBytes(input)
+		SubBytes(input)
 		if !bytes.Equal(input, expected[i]) {
 			t.Errorf("[TestSubBytes] Case %d failed: input != expected : '%v' != '%v'", i, input, expected[i])
 		}
@@ -184,7 +184,7 @@ func TestShiftRows(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		shiftRows(input)
+		ShiftRows(input)
 		if !bytes.Equal(input, expected[i]) {
 			t.Errorf("[TestShiftRows] Case %d failed: input != expected : '%v' != '%v'", i, input, expected[i])
 		}
@@ -204,7 +204,7 @@ func TestMixColumns(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		mixColumns(input)
+		MixColumns(input)
 		if !bytes.Equal(input, expected[i]) {
 			t.Errorf("[TestMixColumns] Case %d failed: input != expected : '%v' != '%v'", i, input, expected[i])
 		}
@@ -228,7 +228,7 @@ func TestAddRoundKey(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		addRoundKey(input, keys[i])
+		AddRoundKey(input, keys[i])
 		if !bytes.Equal(input, expected[i]) {
 			t.Errorf("[TestAddRoundKey] Case %d failed: input != expected : '%v' != '%v'", i, input, expected[i])
 		}
@@ -268,7 +268,7 @@ func TestInvShiftRows(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		invShiftRows(input)
+		InvShiftRows(input)
 		if !bytes.Equal(input, expected[i]) {
 			t.Errorf("[TestInvShiftRows] Case %d failed: input != expected : '%v' != '%v'", i, input, expected[i])
 		}
@@ -288,7 +288,7 @@ func TestInvSubBytes(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		invSubBytes(input)
+		InvSubBytes(input)
 		if !bytes.Equal(input, expected[i]) {
 			t.Errorf("[TestInvSubBytes] Case %d failed: input != expected : '%v' != '%v'", i, input, expected[i])
 		}
@@ -308,7 +308,7 @@ func TestInvMixColumns(t *testing.T) {
 	}
 
 	for i, input := range inputs {
-		invMixColumns(input)
+		InvMixColumns(input)
 		if !bytes.Equal(input, expected[i]) {
 			t.Errorf("[TestInvMixColumns] Case %d failed: input != expected : '%v' != '%v'", i, input, expected[i])
 		}

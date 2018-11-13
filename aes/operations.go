@@ -12,7 +12,7 @@ func keyExpansion(key []byte, expanded []byte) {
 			rotWord(tmp)
 			subWord(tmp)
 			tmp[0] ^= rc
-			rc = mul(rc, 2)
+			rc = Mul(rc, 2)
 		} else if Nk > 6 && i%Nk == 4 {
 			subWord(tmp)
 		}
@@ -39,7 +39,8 @@ func subWord(word []byte) {
 	}
 }
 
-func subBytes(state []byte) {
+// SubBytes transforms given state with sbox
+func SubBytes(state []byte) {
 	for i := 0; i < Nb*BytesOfWords; i++ {
 		x := state[i] >> 4
 		y := state[i] & 0xf
@@ -47,7 +48,8 @@ func subBytes(state []byte) {
 	}
 }
 
-func shiftRows(state []byte) {
+// ShiftRows transforms given state with byte shift
+func ShiftRows(state []byte) {
 	l := len(state)
 	t := make([]byte, l)
 	copy(t, state)
@@ -59,25 +61,28 @@ func shiftRows(state []byte) {
 	}
 }
 
-func mixColumns(state []byte) {
+// MixColumns transforms given state with multiplication in a Golois Field
+func MixColumns(state []byte) {
 	l := len(state)
 	tmp := make([]byte, l)
 	copy(tmp, state)
 
 	for y := 0; y < Nb; y++ {
 		for x := 0; x < l/Nb; x++ {
-			state[y*BytesOfWords+x] = mul(polyMatrix[x][0], tmp[y*BytesOfWords]) ^ mul(polyMatrix[x][1], tmp[y*BytesOfWords+1]) ^ mul(polyMatrix[x][2], tmp[y*BytesOfWords+2]) ^ mul(polyMatrix[x][3], tmp[y*BytesOfWords+3])
+			state[y*BytesOfWords+x] = Mul(polyMatrix[x][0], tmp[y*BytesOfWords]) ^ Mul(polyMatrix[x][1], tmp[y*BytesOfWords+1]) ^ Mul(polyMatrix[x][2], tmp[y*BytesOfWords+2]) ^ Mul(polyMatrix[x][3], tmp[y*BytesOfWords+3])
 		}
 	}
 }
 
-func addRoundKey(state, key []byte) {
+// AddRoundKey transforms given state with XOR to round key
+func AddRoundKey(state, key []byte) {
 	for i := 0; i < Nb*BytesOfWords; i++ {
 		state[i] ^= key[i]
 	}
 }
 
-func invShiftRows(state []byte) {
+// InvShiftRows transforms given state with byte shift
+func InvShiftRows(state []byte) {
 	tmp := make([]byte, Nb*BytesOfWords)
 	copy(tmp, state)
 
@@ -88,7 +93,8 @@ func invShiftRows(state []byte) {
 	}
 }
 
-func invSubBytes(state []byte) {
+// InvSubBytes transforms given state with sbox
+func InvSubBytes(state []byte) {
 	for i := 0; i < Nb*BytesOfWords; i++ {
 		x := state[i] >> 4
 		y := state[i] & 0xf
@@ -96,13 +102,14 @@ func invSubBytes(state []byte) {
 	}
 }
 
-func invMixColumns(state []byte) {
+// InvMixColumns transforms given state with multiplication in a Golois Field
+func InvMixColumns(state []byte) {
 	tmp := make([]byte, Nb*BytesOfWords)
 	copy(tmp, state)
 
 	for y := 0; y < Nb; y++ {
 		for x := 0; x < BytesOfWords; x++ {
-			state[y*BytesOfWords+x] = mul(invPolyMatrix[x][0], tmp[y*BytesOfWords]) ^ mul(invPolyMatrix[x][1], tmp[y*BytesOfWords+1]) ^ mul(invPolyMatrix[x][2], tmp[y*BytesOfWords+2]) ^ mul(invPolyMatrix[x][3], tmp[y*BytesOfWords+3])
+			state[y*BytesOfWords+x] = Mul(invPolyMatrix[x][0], tmp[y*BytesOfWords]) ^ Mul(invPolyMatrix[x][1], tmp[y*BytesOfWords+1]) ^ Mul(invPolyMatrix[x][2], tmp[y*BytesOfWords+2]) ^ Mul(invPolyMatrix[x][3], tmp[y*BytesOfWords+3])
 		}
 	}
 }

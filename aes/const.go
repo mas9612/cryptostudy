@@ -36,8 +36,8 @@ const (
 	ModeOFB
 	// ModeCTR represents CTR mode will be used as encryption mode
 	ModeCTR
-	// ModeCTR represents CBC with CTS mode will be used as encryption mode
-	ModeCBC_CTS
+	// ModeCBCCTS represents CBC with CTS mode will be used as encryption mode
+	ModeCBCCTS
 )
 
 var (
