@@ -1,5 +1,7 @@
 package calc
 
+// Inverse return value of inverse a mod b
+// (inverse / gcd) % b = 1
 func Inverse(a, b int) int {
 	_, x, _ := ExtGcd(a, b)
 	for x < 0 {
@@ -8,7 +10,7 @@ func Inverse(a, b int) int {
 	return x
 }
 
-// return value:
+// ExtGcd return value:
 // - gcd, x, y
 func ExtGcd(a, b int) (int, int, int) {
 	gcd0, gcd1 := a, b
