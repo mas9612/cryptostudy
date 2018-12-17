@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/mas9612/cryptostudy/pkg/calc"
 )
 
 func main() {
@@ -21,41 +23,8 @@ func main() {
 		os.Exit(1)
 	}
 	if *v == true {
-		fmt.Println(gcd(*a, *b, WithVerbose(true)))
+		fmt.Println(calc.Gcd(*a, *b, calc.WithVerbose(true)))
 	} else {
-		fmt.Println(gcd(*a, *b, WithVerbose(false)))
+		fmt.Println(calc.Gcd(*a, *b, calc.WithVerbose(false)))
 	}
-}
-
-type gcdOptions struct {
-	verbose bool
-}
-
-// GcdOption is a method to set appropriate option to gcdOptions struct
-type GcdOption func(*gcdOptions)
-
-// WithVerbose set option to increase verbosity in gcd()
-func WithVerbose(verbose bool) GcdOption {
-	return func(ops *gcdOptions) {
-		ops.verbose = verbose
-	}
-}
-
-func gcd(a, b int, options ...GcdOption) int {
-	opt := gcdOptions{}
-	for _, o := range options {
-		o(&opt)
-	}
-
-	if b == 0 {
-		if opt.verbose == true { // Print intermediate calculation
-			fmt.Printf("gcd = %d\n", a)
-		}
-		return a
-	}
-	reminder := a % b
-	if opt.verbose == true { // Print intermediate calculation
-		fmt.Printf("%d %% %d = %d\n", a, b, reminder)
-	}
-	return gcd(b, reminder, WithVerbose(opt.verbose))
 }

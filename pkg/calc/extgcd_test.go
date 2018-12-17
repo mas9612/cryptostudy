@@ -1,4 +1,4 @@
-package main
+package calc
 
 import (
 	"testing"
@@ -17,7 +17,7 @@ func TestExtGcd(t *testing.T) {
 	}
 	for i, input := range inputs {
 		a, b := input[0], input[1]
-		gcd, x, y := extGcd(a, b)
+		gcd, x, y := ExtGcd(a, b)
 		if gcd != gcds[i] {
 			t.Errorf("[TestExtGcd] case %d failed: gcd(%d, %d) != %d , expected : %d", i, a, b, gcd, gcds[i])
 		}
@@ -40,7 +40,7 @@ func TestInverse(t *testing.T) {
 	}
 	for i, input := range inputs {
 		a, b := input[0], input[1]
-		result := inverse(a, b)
+		result := Inverse(a, b)
 		if (a*result)%b != gcds[i] {
 			t.Errorf("[TestInverse] case %d failed: %d*inverse(%d, %d) mod %d != %d ", i, a, a, b, b, gcds[i])
 		}
