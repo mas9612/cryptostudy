@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strconv"
 
 	"github.com/mas9612/cryptostudy/pkg/aes"
+	"github.com/mas9612/cryptostudy/pkg/util"
 )
 
 func main() {
@@ -83,25 +83,9 @@ func main() {
 
 	var result []byte
 	if !*decrypt {
-		result = aes.Cipher(bytes, hexStringToBytes(*key), cipherMode, hexStringToBytes(*iv))
+		result = aes.Cipher(bytes, util.HexStringToBytes(*key), cipherMode, util.HexStringToBytes(*iv))
 	} else {
-		result = aes.InvCipher(bytes, hexStringToBytes(*key), cipherMode, hexStringToBytes(*iv))
+		result = aes.InvCipher(bytes, util.HexStringToBytes(*key), cipherMode, util.HexStringToBytes(*iv))
 	}
 	fmt.Print(string(result))
-}
-
-func hexStringToBytes(hex string) []byte {
-	bytes := make([]byte, len(hex)/2)
-	idx := 0
-
-	for i := 0; i < len(hex); i += 2 {
-		tmp, err := strconv.ParseUint(hex[i:i+2], 16, 8)
-		if err != nil {
-			fmt.Println("Failed to parse hex string")
-			os.Exit(1)
-		}
-		bytes[idx] = byte(tmp)
-		idx++
-	}
-	return bytes
 }
