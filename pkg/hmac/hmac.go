@@ -23,7 +23,8 @@ func Hmac(h hash.Hash, key []byte, keyLen int, data []byte) []byte {
 func InitializeKey(h hash.Hash, key []byte, keyLen int) []byte {
 	if keyLen > h.BlockSize() { // make sure that Hash is initial state
 		h.Reset()
-		key = h.Sum(key)
+		h.Write(key)
+		key = h.Sum(nil)
 	}
 	// We don't need to check whether key length is less than block size
 	// because when we create new slice with make(), it'll be initialized with zero-value
