@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/mas9612/cryptostudy.svg?style=svg)](https://circleci.com/gh/mas9612/cryptostudy)
 
-AES implementation with Go.
+Some crypto algorithm implementation with Go.
 Source codes in this repository are written for personal use.
 
 ```
@@ -24,4 +24,12 @@ Usage of AES:
 $ go build ./cmd/extgcd
 $ ./extgcd 5 13
 8
+
+$ go build ./cmd/hmac
+$ ./hmac
+Usage of ./hmac:
+  -algorithm string
+        Hash algorithm used to calculate HMAC. Default is "MD5". Valid algorithm is one of [MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512] (default "MD5")
+  -key string
+        Secret key to calculate HMAC. Specify as hex notation without preceding "0x".
 ```
