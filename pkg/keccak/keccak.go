@@ -1,5 +1,7 @@
 package keccak
 
+import "fmt"
+
 // Word is 64 bits in SHA-3
 type Word [8]byte
 
@@ -8,6 +10,31 @@ type Lane Word
 
 // State is a two-dimensional array of lanes
 type State []byte
+
+func (s State) get(x, y, z int) byte {
+	bitIndex := w*(5*y+x) + z
+	byteIndex := bitIndex / 8
+	index := 7 - (bitIndex % 8)
+	b := s[byteIndex]
+	mask := byte(1 << uint(index))
+
+	return (b & mask) >> uint(index)
+}
+func (s State) set(x, y, z int, bit byte) error {
+	bitIndex := w*(5*y+x) + z
+	byteIndex := bitIndex / 8
+	index := 7 - (bitIndex % 8)
+	b := s[byteIndex]
+	mask := byte(1 << uint(index))
+	if bit == byte(1) {
+		s[byteIndex] = b | mask
+	} else if bit == byte(0) {
+		s[byteIndex] = b & (mask ^ byte(0xff))
+	} else {
+		return fmt.Errorf("The value passed to the set of State is neither 0 nor 1.Set State to 0 or 1 of type byte")
+	}
+	return nil
+}
 
 // Keccak calculates the hash value of sha3
 func Keccak(d int, M []byte) ([]byte, error) {
