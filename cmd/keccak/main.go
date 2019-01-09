@@ -24,7 +24,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	hash, err := keccak.Keccak(d, data)
+	hash, err := keccak.Keccak(*len, data)
 	if err != nil {
 		log.Fatalln(err)
 	}
