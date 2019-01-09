@@ -82,3 +82,12 @@ func Pad(x, m int) ([]byte, error) {
 
 	return make([]byte, 0), nil
 }
+
+// Modulo returns a mod b
+func Modulo(a, b int) int {
+	tmp := a % b
+	if tmp < 0 {
+		return tmp + b
+	}
+	return tmp
+}
