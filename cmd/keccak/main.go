@@ -11,20 +11,20 @@ import (
 )
 
 func main() {
-	len := flag.Int("d", 256, "The length of the digest of a hash function. Default is \"256\". Valid length is one of [224, 256, 384, 512]")
+	digestLen := flag.Int("d", 256, "The length of the digest of a hash function. Default is \"256\". Valid length is one of [224, 256, 384, 512]")
 	flag.Parse()
 
-	switch *len {
+	switch *digestLen {
 	case 224, 256, 384, 512:
 	default:
-		*len = 256
+		*digestLen = 256
 	}
 
 	data, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	hash, err := keccak.Keccak(*len, data)
+	hash, err := keccak.Keccak(*digestLen, data)
 	if err != nil {
 		log.Fatalln(err)
 	}
