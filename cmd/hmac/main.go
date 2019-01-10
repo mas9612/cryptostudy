@@ -12,6 +12,8 @@ import (
 	"log"
 	"os"
 
+	"golang.org/x/crypto/sha3"
+
 	"github.com/mas9612/cryptostudy/pkg/hmac"
 	"github.com/mas9612/cryptostudy/pkg/util"
 )
@@ -38,6 +40,14 @@ func main() {
 		h = sha512.New384()
 	case "SHA-512":
 		h = sha512.New()
+	case "SHA3-224":
+		h = sha3.New224()
+	case "SHA3-256":
+		h = sha3.New256()
+	case "SHA3-384":
+		h = sha3.New384()
+	case "SHA3-512":
+		h = sha3.New512()
 	}
 
 	data, err := ioutil.ReadAll(os.Stdin)
