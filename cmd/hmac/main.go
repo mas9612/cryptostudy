@@ -20,9 +20,6 @@ func main() {
 	key := flag.String("key", "", "Secret key to calculate HMAC. Specify as hex notation without preceding \"0x\".")
 	hashAlgo := flag.String("algorithm", "MD5", "Hash algorithm used to calculate HMAC. Default is \"MD5\". Valid algorithm is one of [MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512]")
 	flag.Parse()
-	if *key == "" {
-		log.Fatalln("-key is required")
-	}
 
 	var h hash.Hash
 	switch *hashAlgo {
