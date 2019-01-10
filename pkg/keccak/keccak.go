@@ -24,10 +24,10 @@ func (s *State) set(x, y, z int, bit byte) error {
 	index := 7 - (bitIndex % 8)
 	mask := byte(1 << uint(index))
 
-	if bit == 0x01 {
+	if bit == 0x1 {
 		(*s)[byteIndex] |= mask
-	} else if bit == 0x00 {
-		(*s)[byteIndex] &= mask ^ byte(0xff)
+	} else if bit == 0x0 {
+		(*s)[byteIndex] &^= mask
 	} else {
 		return fmt.Errorf("The value passed to the set of State is neither 0 nor 1.Set State to 0 or 1 of type byte")
 	}
