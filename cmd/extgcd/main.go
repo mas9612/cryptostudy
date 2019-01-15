@@ -1,26 +1,25 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"log"
 	"os"
-	"strconv"
 
 	"github.com/mas9612/cryptostudy/pkg/calc"
 )
 
 func main() {
-	if len(os.Args) < 3 {
-		fmt.Println("Usage: inv NUMA NUMB")
-		os.Exit(1)
+	a := flag.Int("a", 0, "a of inverse(a,b), doesn't allowed 0")
+	b := flag.Int("b", 0, "b of inverse(a,b), doesn't allowed 0")
+	v := flag.Bool("v", false, "Print intermediate calculation")
+	flag.Parse()
+	if *a == 0 || *b == 0 {
+		flag.Usage()
+		os.Exit(0)
 	}
-	a, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		log.Fatalln(err)
+	options := make([]calc.InverseOption, 0)
+	if *v {
+		options = append(options, calc.SetVerbose(true))
 	}
-	b, err := strconv.Atoi(os.Args[2])
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Println(calc.Inverse(a, b))
+	fmt.Println(calc.Inverse(*a, *b, options...))
 }
