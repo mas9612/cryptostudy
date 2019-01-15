@@ -8,6 +8,10 @@ jobs:
       - checkout
 
       - run:
+          name: Install all dependencies
+          command: go get -v -t -d ./...
+
+      - run:
           name: Run unit tests
           command: go test -v ./...
 
