@@ -15,21 +15,19 @@ func (s State) get(x, y, z int) byte {
 	bitIndex := w*(5*y+x) + z
 	byteIndex := bitIndex / 8
 	index := 7 - (bitIndex % 8)
-	b := s[byteIndex]
-	mask := byte(1 << uint(index))
-
-	return (b & mask) >> uint(index)
+	return s[byteIndex] >> uint(index) & 0x01
 }
-func (s State) set(x, y, z int, bit byte) error {
+
+func (s *State) set(x, y, z int, bit byte) error {
 	bitIndex := w*(5*y+x) + z
 	byteIndex := bitIndex / 8
 	index := 7 - (bitIndex % 8)
-	b := s[byteIndex]
 	mask := byte(1 << uint(index))
-	if bit == byte(1) {
-		s[byteIndex] = b | mask
-	} else if bit == byte(0) {
-		s[byteIndex] = b & (mask ^ byte(0xff))
+
+	if bit == 0x1 {
+		(*s)[byteIndex] |= mask
+	} else if bit == 0x0 {
+		(*s)[byteIndex] &^= mask
 	} else {
 		return fmt.Errorf("The value passed to the set of State is neither 0 nor 1.Set State to 0 or 1 of type byte")
 	}
